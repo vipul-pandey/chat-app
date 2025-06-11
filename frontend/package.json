@@ -29,10 +29,8 @@
   },
   "scripts": {
     "vercel-build": "npm install --legacy-peer-deps && npm run build",
-    "preinstall": "npx npm-force-resolutions",
-    "install": "npm install --legacy-peer-deps",
-    "start": "react-scripts --openssl-legacy-provider start",
     "build": "react-scripts --openssl-legacy-provider build",
+    "start": "react-scripts --openssl-legacy-provider start",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
