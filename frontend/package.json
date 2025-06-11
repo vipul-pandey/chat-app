@@ -18,7 +18,6 @@
     "emoji-picker-react": "^4.12.2",
     "framer-motion": "^12.12.1",
     "react": "^18.2.0",
-    "react-chips": "^0.8.0",
     "react-dom": "^18.2.0",
     "react-lottie": "^1.2.3",
     "react-notification-badge": "^1.5.1",
@@ -53,8 +52,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "resolutions": {
-    "react-chips/react": "^18.2.0"
   }
 }
