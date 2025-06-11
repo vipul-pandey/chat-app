@@ -29,6 +29,8 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
+    "install": "npm install --legacy-peer-deps",
     "start": "react-scripts --openssl-legacy-provider start",
     "build": "react-scripts --openssl-legacy-provider build",
     "test": "react-scripts test",
@@ -51,5 +53,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "resolutions": {
+    "react-chips/react": "^18.2.0"
   }
 }
