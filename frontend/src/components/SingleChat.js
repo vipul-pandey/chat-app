@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import "./styles.css";
-import axios from "axios";
+// import axios from "axios";
+import axios from '../api/axiosInstance';
 import io from "socket.io-client";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import {
@@ -20,7 +21,7 @@ import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
 import SVGComponent from "../assests/three-dot-icon.js";
 
-const ENDPOINT = "http://localhost:5000"; // "https://talk-a-tive.herokuapp.com"; -> After deployment
+const ENDPOINT = "https://chat-app-dxnu.onrender.com/"; // "https://talk-a-tive.herokuapp.com"; -> After deployment
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {

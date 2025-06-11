@@ -1,5 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
+import axios from '../../api/axiosInstance';
 import {
   Modal,
   ModalOverlay,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { AddIcon } from "@chakra-ui/icons";
 import { Box, Stack, Text, useToast, Button } from "@chakra-ui/react";
+import axios from '../api/axiosInstance';
 import { getSender } from "../config/ChatLogics";
 import ChatLoading from "./ChatLoading";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
@@ -24,8 +24,10 @@ const MyChats = ({ fetchAgain }) => {
       };
 
       const { data } = await axios.get("/api/chat", config);
+      console.log('data', data);
       setChats(data);
     } catch (error) {
+      console.log('error', error);
       toast({
         title: "Error Occured!",
         description: "Failed to Load the chats",
