@@ -2,26 +2,36 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
-  Button, useDisclosure, Input, Box, Text, Menu,
+  Button,
+  useDisclosure,
+  Input,
+  Box,
+  Text,
+  Menu,
   MenuButton,
   MenuDivider,
   MenuItem,
-  MenuList, Drawer,
+  MenuList,
+  Drawer,
   DrawerBody,
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-  Tooltip, Avatar, useToast, Spinner
+  Tooltip,
+  Avatar,
+  useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { Effect } from "react-notification-badge";
 import NotificationBadge from "react-notification-badge";
-import { HamburgerIcon } from "@chakra-ui/icons"
+import { HamburgerIcon } from "@chakra-ui/icons";
 import ChatLoading from "../ChatLoading";
 import ProfileModal from "./ProfileModal";
 import { getSender } from "../../config/ChatLogics";
 import UserListItem from "../userAvatar/UserListItem";
 import { ChatState } from "../../Context/ChatProvider";
+import GroupChatModal from "./GroupChatModal";
 
 function SideDrawer() {
   const [search, setSearch] = useState("");
@@ -124,7 +134,16 @@ function SideDrawer() {
         p="5px 10px 5px 10px"
         borderWidth="5px"
       >
-        <HamburgerIcon />
+        <Menu>
+          <MenuButton>
+            <HamburgerIcon />
+          </MenuButton>
+          <MenuList>
+            <GroupChatModal>
+              <MenuItem> Group Chat </MenuItem>
+            </GroupChatModal>
+          </MenuList>
+        </Menu>
         <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
           <Button variant="ghost" onClick={onOpen}>
             <i className="fas fa-search"></i>
@@ -173,7 +192,7 @@ function SideDrawer() {
             </MenuButton>
             <MenuList>
               <ProfileModal user={user}>
-                <MenuItem>My Profile</MenuItem>{" "}
+                <MenuItem>My Profile</MenuItem>
               </ProfileModal>
               <MenuDivider />
               <MenuItem onClick={logoutHandler}>Logout</MenuItem>
