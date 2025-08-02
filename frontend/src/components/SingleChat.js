@@ -37,8 +37,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const emojiRef = useRef();
 
   const onEmojiClick = (emojiData) => {
+    console.log('mojiData', emojiData);
     setNewMessage(prev => prev + emojiData.emoji);
   };
+
+  console.log('newMessage', newMessage);
 
   const defaultOptions = {
     loop: true,
@@ -308,6 +311,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <Input
                   placeholder="Enter a message..."
                   variant="unstyled"
+                  value={newMessage}
+                  onChange={typingHandler}
                   flex="1"
                   autoComplete="off"
                   autoCorrect="off"
