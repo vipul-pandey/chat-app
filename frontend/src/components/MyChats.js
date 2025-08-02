@@ -1,18 +1,45 @@
 import { useEffect, useState } from "react";
-import { AddIcon } from "@chakra-ui/icons";
-import { Box, Stack, Text, useToast, Button } from "@chakra-ui/react";
-import axios from '../api/axiosInstance';
-import { getSender } from "../config/ChatLogics";
+import {
+  Box,
+  Stack,
+  Text,
+  useToast,
+  Button,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Tooltip,
+  useDisclosure,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+  Spinner,
+  Input,
+  Avatar,
+} from "@chakra-ui/react";
+import axios from "../api/axiosInstance";
+import { getSender, getSenderImage } from "../config/ChatLogics";
 import ChatLoading from "./ChatLoading";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
+import SVGComponent from "../assests/three-dot-icon.js";
+import UserListItem from "./userAvatar/UserListItem";
 
 const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
+  const [search, setSearch] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingChat, setLoadingChat] = useState(false);
 
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
 
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  console.log('searchResult========', searchResult, 'chats', chats);
 
   const fetchChats = async () => {
     // console.log(user._id);
@@ -24,10 +51,8 @@ const MyChats = ({ fetchAgain }) => {
       };
 
       const { data } = await axios.get("/api/chat", config);
-      console.log('data', data);
       setChats(data);
     } catch (error) {
-      console.log('error', error);
       toast({
         title: "Error Occured!",
         description: "Failed to Load the chats",
@@ -45,12 +70,78 @@ const MyChats = ({ fetchAgain }) => {
     // eslint-disable-next-line
   }, [fetchAgain]);
 
+  const handleSearch = async () => {
+    if (!search) {
+      toast({
+        title: "Please Enter something in search",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "top-left",
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      const { data } = await axios.get(`/api/user?search=${search}`, config);
+
+      setLoading(false);
+      setSearchResult(data);
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        description: "Failed to Load the Search Results",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-left",
+      });
+    }
+  };
+
+  const accessChat = async (userId) => {
+    console.log(userId);
+
+    try {
+      setLoadingChat(true);
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      const { data } = await axios.post(`/api/chat`, { userId }, config);
+
+      if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
+      setSelectedChat(data);
+      setLoadingChat(false);
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Error fetching the chat",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-left",
+      });
+    }
+  };
+
   return (
     <Box
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDir="column"
       alignItems="center"
-      p={3}
+      p={1}
       bg="white"
       w={{ base: "100%", md: "31%" }}
       borderRadius="lg"
@@ -59,13 +150,48 @@ const MyChats = ({ fetchAgain }) => {
       <Box
         display="flex"
         flexDir="column"
-        p={3}
+        p={1}
         bg="#F8F8F8"
         w="100%"
         h="100%"
         borderRadius="lg"
         overflowY="hidden"
       >
+        <Box
+          display={"flex"}
+          justifyContent="space-between"
+          w="100%"
+          px={2}
+          py={4}
+        >
+          <span style={{ fontSize: "18px", fontWeight: "bold" }}> Chats</span>
+          <Menu>
+            <MenuButton>
+              <SVGComponent />
+            </MenuButton>
+            <MenuList>
+              <GroupChatModal>
+                <MenuItem> Group Chat </MenuItem>
+              </GroupChatModal>
+            </MenuList>
+          </Menu>
+        </Box>
+        <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
+          <Button
+            variant="ghost"
+            onClick={onOpen}
+            w={"100%"}
+            justifyContent={"start"}
+            bg={"#E8E8E8"}
+            my={2}
+            py={1}
+          >
+            <i className="fas fa-search"></i>
+            <Text display={{ base: "none", md: "flex" }} px={4}>
+              Search User
+            </Text>
+          </Button>
+        </Tooltip>
         {chats ? (
           <Stack overflowY="scroll">
             {chats.map((chat) => (
@@ -78,20 +204,33 @@ const MyChats = ({ fetchAgain }) => {
                 py={2}
                 borderRadius="lg"
                 key={chat._id}
+                display={"flex"}
+                alignItems={"center"}
               >
-                <Text>
-                  {!chat.isGroupChat
-                    ? getSender(loggedUser, chat.users)
-                    : chat.chatName}
-                </Text>
-                {chat.latestMessage && (
-                  <Text fontSize="xs">
-                    <b>{chat.latestMessage.sender.name} : </b>
-                    {chat.latestMessage.content.length > 50
-                      ? chat.latestMessage.content.substring(0, 51) + "..."
-                      : chat.latestMessage.content}
+                <Avatar
+                  mr={2}
+                  size="sm"
+                  cursor="pointer"
+                  name={chat.name}
+                  src={!chat.isGroupChat
+                    ? getSenderImage(loggedUser, chat.users)
+                    : chat.pic}
+                />
+                <Box>
+                  <Text>
+                    {!chat.isGroupChat
+                      ? getSender(loggedUser, chat.users)
+                      : chat.chatName}
                   </Text>
-                )}
+                  {chat.latestMessage && (
+                    <Text fontSize="xs">
+                      <b>{chat.latestMessage.sender.name} : </b>
+                      {chat.latestMessage.content.length > 50
+                        ? chat.latestMessage.content.substring(0, 51) + "..."
+                        : chat.latestMessage.content}
+                    </Text>
+                  )}
+                </Box>
               </Box>
             ))}
           </Stack>
@@ -99,7 +238,36 @@ const MyChats = ({ fetchAgain }) => {
           <ChatLoading />
         )}
       </Box>
-    </Box>
+      <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
+          <DrawerBody>
+            <Box display="flex" pb={2}>
+              <Input
+                placeholder="Search by name or email"
+                mr={2}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <Button onClick={handleSearch}>Go</Button>
+            </Box>
+            {loading ? (
+              <ChatLoading />
+            ) : (
+              searchResult?.map((user) => (
+                <UserListItem
+                  key={user._id}
+                  user={user}
+                  handleFunction={() => accessChat(user._id)}
+                />
+              ))
+            )}
+            {loadingChat && <Spinner ml="auto" display="flex" />}
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+    </Box >
   );
 };
 
