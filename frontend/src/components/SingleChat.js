@@ -4,6 +4,7 @@ import "./styles.css";
 import axios from '../api/axiosInstance';
 import io from "socket.io-client";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import { FiSend } from 'react-icons/fi';
 import {
   Box, Text, Input, FormControl, IconButton, Spinner, useToast, Menu,
   MenuButton,
@@ -83,7 +84,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   };
 
   const sendMessage = async (event) => {
-    if (event.key === "Enter" && newMessage) {
+    if ((event.key === "Enter" || event.type === "click") && newMessage) {
       socket.emit("stop typing", selectedChat._id);
       try {
         const config = {
@@ -285,14 +286,45 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   <EmojiPicker onEmojiClick={onEmojiClick} />
                 </div>
               )}
-              <Box display="flex" alignItems="center">
-                <button onClick={() => setShowEmojiPicker(!showEmojiPicker)}>😊</button>
+              <Box
+                display="flex"
+                alignItems="center"
+                bg="white"
+                px={3}
+                py={2}
+                borderRadius="10px"
+                boxShadow="sm"
+                w="100%"
+                mx="auto"
+              >
+                <Box
+                  as="button"
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  fontSize="20px"
+                  mr={2}
+                >
+                  😊
+                </Box>
                 <Input
-                  variant="filled"
-                  bg="#E0E0E0"
-                  placeholder="Enter a message.."
-                  value={newMessage}
-                  onChange={typingHandler}
+                  placeholder="Enter a message..."
+                  variant="unstyled"
+                  flex="1"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck="false"
+                  bg="transparent"
+                  _hover={{ bg: 'transparent' }}
+                  _focus={{ boxShadow: 'none', outline: 'none', bg: 'transparent' }}
+                  _active={{ boxShadow: 'none', outline: 'none', bg: 'transparent' }}
+                />
+                <IconButton
+                  colorScheme="blue"
+                  aria-label="Send message"
+                  icon={<FiSend size="18px" />}
+                  onClick={e => sendMessage(e)}
+                  ml={2}
+                  borderRadius="full"
+                  size="sm"
                 />
               </Box>
             </FormControl>
