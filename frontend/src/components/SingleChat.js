@@ -1,19 +1,27 @@
 import { useEffect, useState, useRef } from "react";
 import "./styles.css";
 // import axios from "axios";
-import axios from '../api/axiosInstance';
+import axios from "../api/axiosInstance";
 import io from "socket.io-client";
 import { ArrowBackIcon } from "@chakra-ui/icons";
-import { FiSend } from 'react-icons/fi';
+import { FiSend } from "react-icons/fi";
 import {
-  Box, Text, Input, FormControl, IconButton, Spinner, useToast, Menu,
+  Box,
+  Text,
+  Input,
+  FormControl,
+  IconButton,
+  Spinner,
+  useToast,
+  Menu,
   MenuButton,
   MenuItem,
   MenuList,
+  Avatar,
 } from "@chakra-ui/react";
 import Lottie from "react-lottie";
-import EmojiPicker from 'emoji-picker-react';
-import { getSender, getSenderFull } from "../config/ChatLogics";
+import EmojiPicker from "emoji-picker-react";
+import { getSender, getSenderFull, getSenderImage } from "../config/ChatLogics";
 import ProfileModal from "./miscellaneous/ProfileModal";
 import ScrollableChat from "./ScrollableChat";
 import animationData from "../animations/typing.json";
@@ -37,11 +45,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const emojiRef = useRef();
 
   const onEmojiClick = (emojiData) => {
-    console.log('mojiData', emojiData);
-    setNewMessage(prev => prev + emojiData.emoji);
+    setNewMessage((prev) => prev + emojiData.emoji);
   };
-
-  console.log('newMessage', newMessage);
 
   const defaultOptions = {
     loop: true,
@@ -182,14 +187,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
   useEffect(() => {
     if (showEmojiPicker) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     } else {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     }
 
     // Cleanup on unmount
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showEmojiPicker]);
 
@@ -212,34 +217,55 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               icon={<ArrowBackIcon />}
               onClick={() => setSelectedChat("")}
             />
-            {messages &&
+            {messages && (
               <>
-                {!selectedChat.isGroupChat ? getSender(user, selectedChat.users) : selectedChat.chatName}
+                <Box display={"flex"} alignItems={"center"}>
+                  <Avatar
+                    mr={2}
+                    size="sm"
+                    cursor="pointer"
+                    name={selectedChat.name}
+                    src={
+                      !selectedChat.isGroupChat
+                        ? getSenderImage(user, selectedChat.users)
+                        : selectedChat.pic
+                    }
+                  />
+                  <Text>
+                    {" "}
+                    {!selectedChat.isGroupChat
+                      ? getSender(user, selectedChat.users)
+                      : selectedChat.chatName}
+                  </Text>
+                </Box>
                 <Menu>
                   <MenuButton>
                     <SVGComponent />
                   </MenuButton>
                   <MenuList>
-                    {!selectedChat.isGroupChat ?
-                      <ProfileModal user={getSenderFull(user, selectedChat.users)}>
-                        <MenuItem fontSize='medium' fontWeight='bold'>
+                    {!selectedChat.isGroupChat ? (
+                      <ProfileModal
+                        user={getSenderFull(user, selectedChat.users)}
+                      >
+                        <MenuItem fontSize="medium" fontWeight="bold">
                           Profile
                         </MenuItem>
-                      </ProfileModal> :
+                      </ProfileModal>
+                    ) : (
                       <UpdateGroupChatModal
                         fetchMessages={fetchMessages}
                         fetchAgain={fetchAgain}
                         setFetchAgain={setFetchAgain}
                       >
-                        <MenuItem fontSize='medium' fontWeight='bold'>
+                        <MenuItem fontSize="medium" fontWeight="bold">
                           Profile
                         </MenuItem>
                       </UpdateGroupChatModal>
-                    }
+                    )}
                   </MenuList>
                 </Menu>
               </>
-            }
+            )}
           </Text>
           <Box
             display="flex"
@@ -285,7 +311,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <></>
               )}
               {showEmojiPicker && (
-                <div ref={emojiRef} style={{ position: 'absolute', bottom: '40px', zIndex: 1 }}>
+                <div
+                  ref={emojiRef}
+                  style={{ position: "absolute", bottom: "40px", zIndex: 1 }}
+                >
                   <EmojiPicker onEmojiClick={onEmojiClick} />
                 </div>
               )}
@@ -318,15 +347,23 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   autoCorrect="off"
                   spellCheck="false"
                   bg="transparent"
-                  _hover={{ bg: 'transparent' }}
-                  _focus={{ boxShadow: 'none', outline: 'none', bg: 'transparent' }}
-                  _active={{ boxShadow: 'none', outline: 'none', bg: 'transparent' }}
+                  _hover={{ bg: "transparent" }}
+                  _focus={{
+                    boxShadow: "none",
+                    outline: "none",
+                    bg: "transparent",
+                  }}
+                  _active={{
+                    boxShadow: "none",
+                    outline: "none",
+                    bg: "transparent",
+                  }}
                 />
                 <IconButton
                   colorScheme="blue"
                   aria-label="Send message"
                   icon={<FiSend size="18px" />}
-                  onClick={e => sendMessage(e)}
+                  onClick={(e) => sendMessage(e)}
                   ml={2}
                   borderRadius="full"
                   size="sm"
@@ -337,13 +374,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         </>
       ) : (
         // to get socket.io on same page
-        <Box display="flex" alignItems="center" justifyContent="center" h="100%">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          h="100%"
+        >
           <Text fontSize="3xl" pb={3} fontFamily="Work sans">
             Click on a user to start chatting
           </Text>
         </Box>
-      )
-      }
+      )}
     </>
   );
 };
