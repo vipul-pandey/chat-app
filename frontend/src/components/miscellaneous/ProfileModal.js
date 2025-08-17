@@ -40,7 +40,7 @@ const ProfileModal = ({ user, children }) => {
           >
             <Box alignItems="center">
               <Image
-                borderRadius="full"
+                borderRadius="10%"
                 boxSize="50px"
                 margin={"0 auto"}
                 src={user.pic}

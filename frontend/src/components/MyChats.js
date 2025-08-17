@@ -20,6 +20,7 @@ import {
   Input,
   Avatar,
 } from "@chakra-ui/react";
+import dayjs from "dayjs";
 import axios from "../api/axiosInstance";
 import { getSender, getSenderImage } from "../config/ChatLogics";
 import ChatLoading from "./ChatLoading";
@@ -166,7 +167,7 @@ const MyChats = ({ fetchAgain }) => {
           py={4}
         >
           <span style={{ fontSize: "18px", fontWeight: "bold" }}> Chats</span>
-          <Box display={{ base: "none", md: "flex" }} alignItems="center">
+          <Box display={{ base: "none", md: "flex" }} alignItems="center" gap={2}>
             <ChatWidget />
             <Menu>
               <MenuButton>
@@ -216,24 +217,30 @@ const MyChats = ({ fetchAgain }) => {
                   size="sm"
                   cursor="pointer"
                   name={chat.name}
+                  borderRadius={"10%"}
                   src={!chat.isGroupChat
                     ? getSenderImage(loggedUser, chat.users)
                     : chat.pic || chat.groupAdmin.pic}
                 />
-                <Box>
-                  <Text>
-                    {!chat.isGroupChat
-                      ? getSender(loggedUser, chat.users)
-                      : chat.chatName}
-                  </Text>
-                  {chat.latestMessage && (
-                    <Text fontSize="xs">
-                      <b>{chat.latestMessage.sender.name} : </b>
-                      {chat.latestMessage.content.length > 50
-                        ? chat.latestMessage.content.substring(0, 51) + "..."
-                        : chat.latestMessage.content}
+                <Box display={'flex'} width={'100%'} justifyContent={"space-between"}>
+                  <Box>
+                    <Text>
+                      {!chat.isGroupChat
+                        ? getSender(loggedUser, chat.users)
+                        : chat.chatName}
                     </Text>
-                  )}
+                    {chat.latestMessage && (
+                      <Text fontSize="xs">
+                        <b>{chat.latestMessage.sender.name} : </b>
+                        {chat.latestMessage.content.length > 50
+                          ? chat.latestMessage.content.substring(0, 51) + "..."
+                          : chat.latestMessage.content}
+                      </Text>
+                    )}
+                  </Box>
+                  <Text style={{ fontSize: "0.8em", color: theme.lightGreyColor, marginLeft: "12px" }}>
+                    {dayjs(chat.latestMessage.updatedAt).format("hh:mm A")}
+                  </Text>
                 </Box>
               </Box>
             ))}
@@ -244,7 +251,7 @@ const MyChats = ({ fetchAgain }) => {
       </Box>
       <Drawer placement="left" onClose={onClose} isOpen={isOpen} >
         <DrawerOverlay />
-        <DrawerContent bg={theme.mainBgColor} color="white">
+        <DrawerContent bg={theme.mainBgColor}>
           <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
           <DrawerBody>
             <Box display="flex" pb={2}>

@@ -47,17 +47,18 @@ const theme = extendTheme({
       borderRadius: 'md',
       bg: `purple.100`,
 
-      // Let's also provide dark mode alternatives
+      // provide dark mode alternatives
       _dark: {
         bg: `purple.600`,
         color: 'white',
       },
     },
   },
-  mainBgColor: "#f8f8f8", // Custom main background color
-  secondaryBgColor: "#f8f8f8c8", // Custom secondary background color
+  mainBgColor: "#f8f8f8",
+  secondaryBgColor: "#f8f8f8c8",
   singleChatBgColor: "#e8e8e8",
-  whiteColor: "#ffffff", // Custom white color
+  whiteColor: "#ffffff",
+  lightGreyColor: "#4b4949ff",
 });
 
 export default theme;

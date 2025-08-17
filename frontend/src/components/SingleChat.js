@@ -227,6 +227,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     size="sm"
                     cursor="pointer"
                     name={selectedChat.name}
+                    borderRadius={"10%"}
                     src={
                       !selectedChat.isGroupChat
                         ? getSenderImage(user, selectedChat.users)
@@ -239,7 +240,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                       : selectedChat.chatName}
                   </Text>
                 </Box>
-                <Box alignItems={"center"} display="flex">
+                <Box alignItems={"center"} display="flex" gap={2}>
                   <ChatWidget />
                   <Menu>
                     <MenuButton>
