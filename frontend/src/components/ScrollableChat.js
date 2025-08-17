@@ -1,5 +1,6 @@
-import { Avatar, Tooltip } from "@chakra-ui/react";
+import { Avatar, Tooltip, Text } from "@chakra-ui/react";
 import ScrollableFeed from "react-scrollable-feed";
+import dayjs from "dayjs";
 import {
   isLastMessage,
   isSameSender,
@@ -7,9 +8,21 @@ import {
   isSameUser,
 } from "../config/ChatLogics";
 import { ChatState } from "../Context/ChatProvider";
+import theme from "../theme.js";
 
 const ScrollableChat = ({ messages }) => {
   const { user } = ChatState();
+
+  const messageContent = (m) => {
+    return (
+      <Text display={"flex"} alignItems="center">
+        {m.content}
+        <Text fontSize={'0.8em'} color={theme.lightGreyColor} marginLeft={'12px'}>
+          {dayjs(m.updatedAt).format("hh:mm A")}
+        </Text>
+      </Text>
+    );
+  }
 
   return (
     <ScrollableFeed>
@@ -40,7 +53,7 @@ const ScrollableChat = ({ messages }) => {
                 maxWidth: "75%",
               }}
             >
-              {m.content}
+              {messageContent(m)}
             </span>
           </div>
         ))}
