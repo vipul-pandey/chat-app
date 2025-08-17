@@ -12,11 +12,22 @@
   width: 0px;
 }
 
-::-webkit-scrollbar-thumb {
+/* Global style for all react-icons */
+[class^="react-icons"],
+[class*=" react-icons"] {
+  cursor: pointer !important;
+}
+
+/* Make all SVGs show pointer cursor */
+svg {
+  cursor: pointer !important;
+}
+
+/* ::-webkit-scrollbar-thumb {
   background: rgba(136, 136, 136, 0.281);
 }
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+/* ::-webkit-scrollbar-thumb:hover {
   background: #555;
-}
+} */

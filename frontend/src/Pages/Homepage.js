@@ -8,10 +8,11 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Text,
+  Image,
 } from "@chakra-ui/react";
 import Login from "../components/Authentication/Login";
 import Signup from "../components/Authentication/Signup";
+import chattr from "../assests/chattr.png";
 
 function Homepage() {
   const navigate = useNavigate();
@@ -34,9 +35,14 @@ function Homepage() {
         borderRadius="lg"
         borderWidth="1px"
       >
-        <Text fontSize="4xl" fontFamily="Work sans">
-          Talkibly
-        </Text>
+        <Box margin={"0 auto"}>
+          <Image
+            src={chattr}
+            alt="Chattr Logo"
+            width="110px"
+            height="50px"
+          />
+        </Box>
       </Box>
       <Box bg="white" w="100%" p={4} borderRadius="lg" borderWidth="1px">
         <Tabs isFitted variant="soft-rounded">

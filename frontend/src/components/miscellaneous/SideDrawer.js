@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import {
   Box,
-  Text,
   Menu,
   MenuButton,
   MenuDivider,
   MenuItem,
   MenuList,
+  Image,
 } from "@chakra-ui/react";
 import { BellIcon } from "@chakra-ui/icons";
 import { Effect } from "react-notification-badge";
@@ -15,6 +15,8 @@ import ProfileModal from "./ProfileModal";
 import { getSender } from "../../config/ChatLogics";
 import { ChatState } from "../../Context/ChatProvider";
 import SVGComponent from "../../assests/three-dot-icon.js";
+import theme from "../../theme.js";
+import chattr from "../../assests/chattr.png";
 
 function SideDrawer() {
 
@@ -38,14 +40,19 @@ function SideDrawer() {
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        bg="white"
+        bg={theme.mainBgColor}
         w="100%"
         p="5px 10px 5px 10px"
         borderWidth="5px"
       >
-        <Text fontSize="2xl" fontFamily="Work sans">
-          Talkibly
-        </Text>
+        <>
+          <Image
+            src={chattr}
+            alt="Chattr Logo"
+            width="110px"
+            height="50px"
+          />
+        </>
         <div>
           <Menu>
             <MenuButton p={1}>

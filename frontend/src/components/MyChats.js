@@ -27,6 +27,8 @@ import GroupChatModal from "./miscellaneous/GroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
 import SVGComponent from "../assests/three-dot-icon.js";
 import UserListItem from "./userAvatar/UserListItem";
+import theme from "../theme.js";
+import ChatWidget from "./AIChatWidget.jsx";
 
 const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
@@ -135,14 +137,13 @@ const MyChats = ({ fetchAgain }) => {
       });
     }
   };
-
   return (
     <Box
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDir="column"
       alignItems="center"
       p={1}
-      bg="white"
+      bg={theme.mainBgColor}
       w={{ base: "100%", md: "31%" }}
       borderRadius="lg"
       borderWidth="1px"
@@ -151,7 +152,7 @@ const MyChats = ({ fetchAgain }) => {
         display="flex"
         flexDir="column"
         p={1}
-        bg="#F8F8F8"
+        bg={theme.mainBgColor}
         w="100%"
         h="100%"
         borderRadius="lg"
@@ -165,16 +166,19 @@ const MyChats = ({ fetchAgain }) => {
           py={4}
         >
           <span style={{ fontSize: "18px", fontWeight: "bold" }}> Chats</span>
-          <Menu>
-            <MenuButton>
-              <SVGComponent />
-            </MenuButton>
-            <MenuList>
-              <GroupChatModal>
-                <MenuItem> Group Chat </MenuItem>
-              </GroupChatModal>
-            </MenuList>
-          </Menu>
+          <Box display={{ base: "none", md: "flex" }} alignItems="center">
+            <ChatWidget />
+            <Menu>
+              <MenuButton>
+                <SVGComponent />
+              </MenuButton>
+              <MenuList>
+                <GroupChatModal>
+                  <MenuItem> Group Chat </MenuItem>
+                </GroupChatModal>
+              </MenuList>
+            </Menu>
+          </Box>
         </Box>
         <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
           <Button
@@ -214,7 +218,7 @@ const MyChats = ({ fetchAgain }) => {
                   name={chat.name}
                   src={!chat.isGroupChat
                     ? getSenderImage(loggedUser, chat.users)
-                    : chat.pic}
+                    : chat.pic || chat.groupAdmin.pic}
                 />
                 <Box>
                   <Text>
@@ -238,9 +242,9 @@ const MyChats = ({ fetchAgain }) => {
           <ChatLoading />
         )}
       </Box>
-      <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+      <Drawer placement="left" onClose={onClose} isOpen={isOpen} >
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent bg={theme.mainBgColor} color="white">
           <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
           <DrawerBody>
             <Box display="flex" pb={2}>
