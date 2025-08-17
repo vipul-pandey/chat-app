@@ -29,8 +29,10 @@ import animationData from "../animations/typing.json";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
 import SVGComponent from "../assests/three-dot-icon.js";
+import ChatWidget from "./AIChatWidget.jsx";
+import theme from "../theme.js";
 
-const ENDPOINT = "https://chat-app-dxnu.onrender.com/"; // "https://talk-a-tive.herokuapp.com"; -> After deployment
+const ENDPOINT = "https://chat-app-dxnu.onrender.com/"; // "http://localhost:5000"
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
@@ -228,42 +230,44 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     src={
                       !selectedChat.isGroupChat
                         ? getSenderImage(user, selectedChat.users)
-                        : selectedChat.pic
+                        : selectedChat.pic || selectedChat.groupAdmin.pic
                     }
                   />
-                  <Text>
-                    {" "}
+                  <Text fontSize='lg'>
                     {!selectedChat.isGroupChat
                       ? getSender(user, selectedChat.users)
                       : selectedChat.chatName}
                   </Text>
                 </Box>
-                <Menu>
-                  <MenuButton>
-                    <SVGComponent />
-                  </MenuButton>
-                  <MenuList>
-                    {!selectedChat.isGroupChat ? (
-                      <ProfileModal
-                        user={getSenderFull(user, selectedChat.users)}
-                      >
-                        <MenuItem fontSize="medium" fontWeight="bold">
-                          Profile
-                        </MenuItem>
-                      </ProfileModal>
-                    ) : (
-                      <UpdateGroupChatModal
-                        fetchMessages={fetchMessages}
-                        fetchAgain={fetchAgain}
-                        setFetchAgain={setFetchAgain}
-                      >
-                        <MenuItem fontSize="medium" fontWeight="bold">
-                          Profile
-                        </MenuItem>
-                      </UpdateGroupChatModal>
-                    )}
-                  </MenuList>
-                </Menu>
+                <Box alignItems={"center"} display="flex">
+                  <ChatWidget />
+                  <Menu>
+                    <MenuButton>
+                      <SVGComponent />
+                    </MenuButton>
+                    <MenuList>
+                      {!selectedChat.isGroupChat ? (
+                        <ProfileModal
+                          user={getSenderFull(user, selectedChat.users)}
+                        >
+                          <MenuItem fontSize="medium" fontWeight="bold">
+                            Profile
+                          </MenuItem>
+                        </ProfileModal>
+                      ) : (
+                        <UpdateGroupChatModal
+                          fetchMessages={fetchMessages}
+                          fetchAgain={fetchAgain}
+                          setFetchAgain={setFetchAgain}
+                        >
+                          <MenuItem fontSize="medium" fontWeight="bold">
+                            Profile
+                          </MenuItem>
+                        </UpdateGroupChatModal>
+                      )}
+                    </MenuList>
+                  </Menu>
+                </Box>
               </>
             )}
           </Text>
@@ -272,7 +276,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             flexDir="column"
             justifyContent="flex-end"
             p={3}
-            bg="#E8E8E8"
+            bg={theme.singleChatBgColor}
             w="100%"
             h="100%"
             borderRadius="lg"
