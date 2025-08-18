@@ -1,5 +1,4 @@
 // Common JS style objects for reuse
-
 export const boxStyle = {
   display: 'flex',
   flexDirection: 'column',
@@ -9,10 +8,11 @@ export const boxStyle = {
 
 export const textStyle = {
   display: 'inline',
-  borderBottom: '1px solid',
-  borderLeft: '1px solid',
-  borderRadius: '3px',
-  padding: '0 0 3px 4px',
+  border: '2px solid mediumvioletred',
+  borderRadius: '10px',
+  padding: '2px 10px',
   fontWeight: '500',
   fontSize: '16px',
+  backgroundColor: 'rgba(10, 9, 9, 0.8)',
+  color: 'white',
 };
