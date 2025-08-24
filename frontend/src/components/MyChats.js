@@ -239,7 +239,7 @@ const MyChats = ({ fetchAgain }) => {
                     )}
                   </Box>
                   <Text style={{ fontSize: "0.8em", color: theme.lightGreyColor, marginLeft: "12px" }}>
-                    {dayjs(chat.latestMessage.updatedAt).format("hh:mm A")}
+                    {dayjs(chat?.latestMessage?.updatedAt).format("hh:mm A")}
                   </Text>
                 </Box>
               </Box>
