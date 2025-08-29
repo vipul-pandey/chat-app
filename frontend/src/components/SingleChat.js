@@ -77,6 +77,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         `/api/message/${selectedChat._id}`,
         config
       );
+      if (user._id !== selectedChat.latestMessage.sender._id) {
+        await axios.put(
+          `/api/chat/mark-as-seen`,
+          { chatId: selectedChat._id, userId: user._id, },
+          config
+        );
+      }
+      // setFetchAgain(!fetchAgain);
+
       setMessages(data);
       setLoading(false);
 
@@ -104,14 +113,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
         };
         setNewMessage("");
+        // let updatedSelectedChat = { ...selectedChat, unseenMessagesCounts: selectedChat.unseenMessagesCounts + 1 };
         const { data } = await axios.post(
           "/api/message",
           {
             content: newMessage,
+            // chatId: updatedSelectedChat,
             chatId: selectedChat,
           },
           config
         );
+        setFetchAgain(!fetchAgain);
         socket.emit("new message", data);
         setMessages([...messages, data]);
       } catch (error) {
@@ -156,6 +168,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         }
       } else {
         setMessages([...messages, newMessageRecieved]);
+        // setFetchAgain(!fetchAgain);
       }
     });
   });

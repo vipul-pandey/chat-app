@@ -37,7 +37,6 @@ const sendMessage = asyncHandler(async (req, res) => {
 
   try {
     var message = await Message.create(newMessage);
-
     message = await message.populate("sender", "name pic").execPopulate();
     message = await message.populate("chat").execPopulate();
     message = await User.populate(message, {
@@ -45,8 +44,18 @@ const sendMessage = asyncHandler(async (req, res) => {
       select: "name pic email",
     });
 
-    await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
+    // Update latestMessage and increment unseenMessagesCounts
+    // Get previous unseenMessagesCounts count from DB and increment by 1
+    const chat = await Chat.findById(chatId);
+    const prevUnseen = chat?.unseenMessagesCounts || 0;
 
+    var response = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        latestMessage: message,
+        unseenMessagesCounts: prevUnseen + 1,
+      },
+    );
     res.json(message);
   } catch (error) {
     res.status(400);

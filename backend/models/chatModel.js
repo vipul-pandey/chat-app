@@ -10,6 +10,7 @@ const chatModel = mongoose.Schema(
       ref: "Message",
     },
     groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    unseenMessagesCounts: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

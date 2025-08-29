@@ -22,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import axios from "../api/axiosInstance";
-import { getSender, getSenderImage } from "../config/ChatLogics";
+import { getSender, getSenderImage, isMessageSeen } from "../config/ChatLogics";
 import ChatLoading from "./ChatLoading";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
@@ -42,10 +42,8 @@ const MyChats = ({ fetchAgain }) => {
 
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  console.log('searchResult========', searchResult, 'chats', chats);
 
   const fetchChats = async () => {
-    // console.log(user._id);
     try {
       const config = {
         headers: {
@@ -66,6 +64,23 @@ const MyChats = ({ fetchAgain }) => {
       });
     }
   };
+
+  useEffect(() => {
+    const markAllMessagesAsUnSeen = async () => {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      await axios.put(
+        `/api/chat/mark-as-seen`,
+        { chatId: null, userId: user._id, },
+        config
+      );
+    }
+    markAllMessagesAsUnSeen();
+  }, [user._id, user.token]);
 
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
@@ -138,6 +153,16 @@ const MyChats = ({ fetchAgain }) => {
       });
     }
   };
+  // console.log('chats');
+  // Helper function to check if unseen message badge should be shown
+  const shouldShowUnseenBadge = (chat) => {
+    return (
+      selectedChat?._id !== chat?._id &&
+      chat.unseenMessagesCounts > 0 &&
+      isMessageSeen(loggedUser, chat.latestMessage?.sender)
+    );
+  };
+
   return (
     <Box
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
@@ -231,16 +256,35 @@ const MyChats = ({ fetchAgain }) => {
                     </Text>
                     {chat.latestMessage && (
                       <Text fontSize="xs">
-                        <b>{chat.latestMessage.sender.name} : </b>
+                        {chat.isGroupChat && <b>{chat.latestMessage.sender.name} : </b>}
                         {chat.latestMessage.content.length > 50
                           ? chat.latestMessage.content.substring(0, 51) + "..."
                           : chat.latestMessage.content}
                       </Text>
                     )}
                   </Box>
-                  <Text style={{ fontSize: "0.8em", color: theme.lightGreyColor, marginLeft: "12px" }}>
-                    {dayjs(chat?.latestMessage?.updatedAt).format("hh:mm A")}
-                  </Text>
+                  <Box textAlign={"right"}>
+                    <Text style={{ fontSize: "0.8em", color: shouldShowUnseenBadge(chat) ? '#d11567' : theme.lightGreyColor, marginLeft: "12px" }}>
+                      {dayjs(chat?.latestMessage?.updatedAt).format("hh:mm A")}
+                    </Text>
+                    {shouldShowUnseenBadge(chat) && (
+                      <Text as="div" style={{
+                        marginLeft: "8px",
+                        backgroundColor: "#d11567",
+                        width: "20px",
+                        height: "20px",
+                        display: "inline-block",
+                        alignContent: "center",
+                        textAlign: "center",
+                        lineHeight: "20px",
+                        color: "white",
+                        borderRadius: "50%",
+                        fontSize: "0.7em",
+                      }}>
+                        {chat.unseenMessagesCounts}
+                      </Text>
+                    )}
+                  </Box>
                 </Box>
               </Box>
             ))}

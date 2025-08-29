@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Chat = require("../models/chatModel");
 const User = require("../models/userModel");
+const Message = require("../models/messageModel");
 
 //@description     Create or fetch One to One Chat
 //@route           POST /api/chat/
@@ -62,6 +63,7 @@ const fetchChats = asyncHandler(async (req, res) => {
       .populate("latestMessage")
       .sort({ updatedAt: -1 })
       .then(async (results) => {
+        // console.log('results=======>>>>', results);
         results = await User.populate(results, {
           path: "latestMessage.sender",
           select: "name pic email",
@@ -73,6 +75,50 @@ const fetchChats = asyncHandler(async (req, res) => {
     throw new Error(error.message);
   }
 });
+
+const markMessagesAsSeen = asyncHandler(async (req, res) => {
+  const { chatId } = req.body;
+  const userId = req.user._id;
+
+  if (!userId) {
+    return res.sendStatus(400);
+  }
+  try {
+    if (chatId) {
+      // 1. Update unseenMessagesCounts for the selected chat
+      await Chat.updateOne(
+        { _id: chatId },
+        { $set: { unseenMessagesCounts: 0 } }
+      );
+
+      // 2. Update isMessageSeen for the latest message in the selected chat
+      const chat = await Chat.findById(chatId).populate("latestMessage");
+      console.log('chat on mark as seen', chat);
+      if (chat && chat.latestMessage) {
+        await Message.updateOne(
+          { _id: chat.latestMessage._id },
+          { $set: { isMessageSeen: true } }
+        );
+      }
+    }
+
+    // 3. For other chats, set isMessageSeen: false for their latest message
+    const otherChats = await Chat.find({ _id: { $ne: chatId }, users: userId }).populate("latestMessage");
+    for (const otherChat of otherChats) {
+      if (otherChat.latestMessage) {
+        await Message.updateOne(
+          { _id: otherChat.latestMessage._id },
+          { $set: { isMessageSeen: false } }
+        );
+      }
+    }
+
+    res.status(200).send('Messages marked as seen');
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+})
 
 //@description     Create New Group Chat
 //@route           POST /api/chat/group
@@ -144,7 +190,6 @@ const removeFromGroup = asyncHandler(async (req, res) => {
   const { chatId, userId } = req.body;
 
   // check if the requester is admin
-
   const removed = await Chat.findByIdAndUpdate(
     chatId,
     {
@@ -196,6 +241,7 @@ const addToGroup = asyncHandler(async (req, res) => {
 module.exports = {
   accessChat,
   fetchChats,
+  markMessagesAsSeen,
   createGroupChat,
   renameGroup,
   addToGroup,
