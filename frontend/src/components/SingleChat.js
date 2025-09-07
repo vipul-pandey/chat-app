@@ -344,17 +344,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   bottom="40px"
                   left="10px"
                   right="10px"
-                  zIndex={1000}
-                  maxW="100%"
-                  bg="white"
-                  borderRadius="md"
-                  boxShadow="lg"
-                  p={2}
+                  zIndex={1}
                 >
                   <EmojiPicker
                     onEmojiClick={onEmojiClick}
-                    width={{ base: "280px", md: "350px" }}
-                    height={{ base: "300px", md: "400px" }}
                   />
                 </Box>
               )}
