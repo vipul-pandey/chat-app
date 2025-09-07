@@ -218,23 +218,32 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       {selectedChat ? (
         <>
           <Text
-            fontSize={{ base: "28px", md: "30px" }}
-            pb={3}
-            px={2}
+            fontSize={{ base: "18px", md: "30px" }}
+            // pb={{ base: 2, md: 3 }}
+            px={{ base: 3, md: 2 }}
             w="100%"
             fontFamily="Work sans"
             display="flex"
-            justifyContent={{ base: "space-between" }}
+            justifyContent="space-between"
             alignItems="center"
+            height={'50px'}
           >
             <IconButton
               display={{ base: "flex", md: "none" }}
               icon={<ArrowBackIcon />}
               onClick={() => setSelectedChat("")}
+              variant="ghost"
+              size="sm"
+              color="blue.500"
+              _hover={{ bg: "blue.50" }}
+              minW="30px"
+              w="30px"
+              h="30px"
+              mr={2}
             />
             {messages && (
               <>
-                <Box display={"flex"} alignItems={"center"}>
+                <Box display="flex" alignItems="center" flex="1" justifyContent="flex-start">
                   <Avatar
                     mr={2}
                     size="sm"
@@ -247,13 +256,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         : selectedChat.pic || selectedChat.groupAdmin.pic
                     }
                   />
-                  <Text fontSize='lg'>
+                  <Text fontSize={{ base: "md", md: "lg" }} isTruncated maxW={{ base: "150px", md: "200px" }}>
                     {!selectedChat.isGroupChat
                       ? getSender(user, selectedChat.users)
                       : selectedChat.chatName}
                   </Text>
                 </Box>
-                <Box alignItems={"center"} display="flex" gap={2}>
+                <Box alignItems={"center"} display="flex" gap={{ base: 1, md: 2 }} right={0}>
                   <ChatWidget />
                   <Menu>
                     <MenuButton>
@@ -289,11 +298,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             display="flex"
             flexDir="column"
             justifyContent="flex-end"
-            p={3}
+            p={{ base: 2, md: 3 }}
             bg={theme.singleChatBgColor}
             w="100%"
             h="100%"
-            borderRadius="lg"
+            borderRadius={{ base: "0", md: "lg" }}
             overflowY="hidden"
           >
             {loading ? (
@@ -317,41 +326,55 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               mt={3}
             >
               {istyping ? (
-                <div>
+                <Box>
                   <Lottie
                     options={defaultOptions}
                     // height={50}
                     width={70}
                     style={{ marginBottom: 15, marginLeft: 0 }}
                   />
-                </div>
+                </Box>
               ) : (
                 <></>
               )}
               {showEmojiPicker && (
-                <div
+                <Box
                   ref={emojiRef}
-                  style={{ position: "absolute", bottom: "40px", zIndex: 1 }}
+                  position="absolute"
+                  bottom="40px"
+                  left="10px"
+                  right="10px"
+                  zIndex={1000}
+                  maxW="100%"
+                  bg="white"
+                  borderRadius="md"
+                  boxShadow="lg"
+                  p={2}
                 >
-                  <EmojiPicker onEmojiClick={onEmojiClick} />
-                </div>
+                  <EmojiPicker
+                    onEmojiClick={onEmojiClick}
+                    width={{ base: "280px", md: "350px" }}
+                    height={{ base: "300px", md: "400px" }}
+                  />
+                </Box>
               )}
               <Box
                 display="flex"
                 alignItems="center"
                 bg="white"
-                px={3}
-                py={2}
+                px={{ base: 2, md: 3 }}
+                py={{ base: 1.5, md: 2 }}
                 borderRadius="10px"
                 boxShadow="sm"
                 w="100%"
                 mx="auto"
+                minH={{ base: "40px", md: "auto" }}
               >
                 <Box
                   as="button"
                   onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                  fontSize="20px"
-                  mr={2}
+                  fontSize={{ base: "16px", md: "20px" }}
+                  mr={{ base: 1, md: 2 }}
                 >
                   😊
                 </Box>
@@ -380,11 +403,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <IconButton
                   colorScheme="blue"
                   aria-label="Send message"
-                  icon={<FiSend size="18px" />}
+                  icon={<FiSend size="16px" />}
                   onClick={(e) => sendMessage(e)}
-                  ml={2}
+                  ml={{ base: 1, md: 2 }}
                   borderRadius="full"
-                  size="sm"
+                  size={{ base: "sm", md: "md" }}
                 />
               </Box>
             </FormControl>

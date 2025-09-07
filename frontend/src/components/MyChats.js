@@ -168,31 +168,34 @@ const MyChats = ({ fetchAgain }) => {
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDir="column"
       alignItems="center"
-      p={1}
+      p={{ base: 0, md: 1 }}
       bg={theme.mainBgColor}
       w={{ base: "100%", md: "31%" }}
-      borderRadius="lg"
-      borderWidth="1px"
+      borderRadius={{ base: "0", md: "lg" }}
+      borderWidth={{ base: "0", md: "1px" }}
+      h={{ base: "100%", md: "100%" }}
     >
       <Box
         display="flex"
         flexDir="column"
-        p={1}
+        p={{ base: 0, md: 1 }}
         bg={theme.mainBgColor}
         w="100%"
         h="100%"
-        borderRadius="lg"
+        borderRadius={{ base: "0", md: "lg" }}
         overflowY="hidden"
       >
         <Box
           display={"flex"}
           justifyContent="space-between"
+          alignItems="center"
           w="100%"
-          px={2}
-          py={4}
+          px={{ base: 3, md: 2 }}
+          py={{ base: 2, md: 4 }}
+          minH={{ base: "50px", md: "auto" }}
         >
-          <span style={{ fontSize: "18px", fontWeight: "bold" }}> Chats</span>
-          <Box display={{ base: "none", md: "flex" }} alignItems="center" gap={2}>
+          <Text fontSize={{ base: "16px", md: "18px" }} fontWeight="bold" color={{ base: "gray.800", md: "inherit" }}>Chats</Text>
+          <Box display="flex" alignItems="center" gap={2}>
             <ChatWidget />
             <Menu>
               <MenuButton>
@@ -202,26 +205,31 @@ const MyChats = ({ fetchAgain }) => {
                 <GroupChatModal>
                   <MenuItem> Group Chat </MenuItem>
                 </GroupChatModal>
+                <Box display={{ base: "block", md: "none" }}>
+                  <MenuItem onClick={onOpen}> Search Users </MenuItem>
+                </Box>
               </MenuList>
             </Menu>
           </Box>
         </Box>
-        <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
-          <Button
-            variant="ghost"
-            onClick={onOpen}
-            w={"100%"}
-            justifyContent={"start"}
-            bg={"#E8E8E8"}
-            my={2}
-            py={1}
-          >
-            <i className="fas fa-search"></i>
-            <Text display={{ base: "none", md: "flex" }} px={4}>
-              Search User
-            </Text>
-          </Button>
-        </Tooltip>
+        <Box display={{ base: "none", md: "block" }}>
+          <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
+            <Button
+              variant="ghost"
+              onClick={onOpen}
+              w={"100%"}
+              justifyContent={"start"}
+              bg={"#E8E8E8"}
+              my={2}
+              py={1}
+            >
+              <i className="fas fa-search"></i>
+              <Text display={{ base: "none", md: "flex" }} px={4}>
+                Search User
+              </Text>
+            </Button>
+          </Tooltip>
+        </Box>
         {chats ? (
           <Stack overflowY="scroll">
             {chats.map((chat) => (
@@ -230,16 +238,17 @@ const MyChats = ({ fetchAgain }) => {
                 cursor="pointer"
                 bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
                 color={selectedChat === chat ? "white" : "black"}
-                px={3}
-                py={2}
+                px={{ base: 2, md: 3 }}
+                py={{ base: 1, md: 2 }}
                 borderRadius="lg"
                 key={chat._id}
                 display={"flex"}
                 alignItems={"center"}
+                minH={{ base: "50px", md: "auto" }}
               >
                 <Avatar
-                  mr={2}
-                  size="sm"
+                  mr={{ base: 1.5, md: 2 }}
+                  size={{ base: "xs", md: "sm" }}
                   cursor="pointer"
                   name={chat.name}
                   borderRadius={"10%"}
@@ -249,16 +258,16 @@ const MyChats = ({ fetchAgain }) => {
                 />
                 <Box display={'flex'} width={'100%'} justifyContent={"space-between"}>
                   <Box>
-                    <Text>
+                    <Text fontSize={{ base: "xs", md: "md" }} fontWeight={{ base: "medium", md: "medium" }}>
                       {!chat.isGroupChat
                         ? getSender(loggedUser, chat.users)
                         : chat.chatName}
                     </Text>
                     {chat.latestMessage && (
-                      <Text fontSize="xs">
+                      <Text fontSize={{ base: "xs", md: "xs" }} noOfLines={1} color="gray.500" fontWeight="normal">
                         {chat.isGroupChat && <b>{chat.latestMessage.sender.name} : </b>}
-                        {chat.latestMessage.content.length > 50
-                          ? chat.latestMessage.content.substring(0, 51) + "..."
+                        {chat.latestMessage.content.length > 40
+                          ? chat.latestMessage.content.substring(0, 40) + "..."
                           : chat.latestMessage.content}
                       </Text>
                     )}

@@ -15,9 +15,14 @@ const ScrollableChat = ({ messages }) => {
 
   const messageContent = (m) => {
     return (
-      <Text display={"flex"} alignItems="center">
-        {m.content}
-        <Text fontSize={'0.8em'} color={theme.lightGreyColor} marginLeft={'12px'}>
+      <Text display={"flex"} alignItems="center" flexWrap={{ base: "wrap", md: "nowrap" }}>
+        <span style={{ marginRight: "8px" }}>{m.content}</span>
+        <Text 
+          fontSize={{ base: '0.7em', md: '0.8em' }} 
+          color={theme.lightGreyColor} 
+          marginLeft={{ base: '0px', md: '12px' }}
+          whiteSpace="nowrap"
+        >
           {dayjs(m.updatedAt).format("hh:mm A")}
         </Text>
       </Text>
@@ -49,8 +54,11 @@ const ScrollableChat = ({ messages }) => {
                 marginLeft: isSameSenderMargin(messages, m, i, user._id),
                 marginTop: isSameUser(messages, m, i, user._id) ? 3 : 10,
                 borderRadius: "20px",
-                padding: "5px 15px",
-                maxWidth: "75%",
+                padding: window.innerWidth < 768 ? "8px 12px" : "5px 15px",
+                maxWidth: window.innerWidth < 768 ? "85%" : "75%",
+                fontSize: window.innerWidth < 768 ? "14px" : "16px",
+                wordBreak: "break-word",
+                overflowWrap: "break-word"
               }}
             >
               {messageContent(m)}

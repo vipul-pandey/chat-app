@@ -11,6 +11,14 @@ const globalStyles = {
 };
 
 const theme = extendTheme({
+  breakpoints: {
+    base: "0px",
+    sm: "480px",
+    md: "768px",
+    lg: "992px",
+    xl: "1280px",
+    "2xl": "1536px",
+  },
   styles: {
     global: globalStyles,
   },
@@ -59,6 +67,16 @@ const theme = extendTheme({
   singleChatBgColor: "#e8e8e8",
   whiteColor: "#ffffff",
   lightGreyColor: "#4b4949ff",
+  // Mobile-specific utilities
+  mobile: {
+    padding: "8px",
+    fontSize: "14px",
+    minTouchTarget: "44px",
+  },
+  desktop: {
+    padding: "16px",
+    fontSize: "16px",
+  },
 });
 
 export default theme;

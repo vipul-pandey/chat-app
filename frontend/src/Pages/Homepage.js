@@ -24,14 +24,14 @@ function Homepage() {
   }, [navigate]);
 
   return (
-    <Container maxW="xl" centerContent>
+    <Container maxW={{ base: "95%", md: "xl" }} centerContent px={{ base: 4, md: 6 }}>
       <Box
         display="flex"
         textAlign="center"
-        p={3}
+        p={{ base: 2, md: 3 }}
         bg="white"
         w="100%"
-        m="40px 0 15px 0"
+        m={{ base: "20px 0 10px 0", md: "40px 0 15px 0" }}
         borderRadius="lg"
         borderWidth="1px"
       >
@@ -39,12 +39,12 @@ function Homepage() {
           <Image
             src={chattr}
             alt="Chattr Logo"
-            width="110px"
-            height="50px"
+            width={{ base: "80px", md: "110px" }}
+            height={{ base: "35px", md: "50px" }}
           />
         </Box>
       </Box>
-      <Box bg="white" w="100%" p={4} borderRadius="lg" borderWidth="1px">
+      <Box bg="white" w="100%" p={{ base: 3, md: 4 }} borderRadius="lg" borderWidth="1px">
         <Tabs isFitted variant="soft-rounded">
           <TabList mb="1em">
             <Tab>Login</Tab>

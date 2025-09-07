@@ -6,6 +6,34 @@
   background-image: url("./darkbg.jpg");
   background-position: center;
   background-size: cover;
+  overflow-x: hidden;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .App {
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Remove all margins and padding on mobile */
+  body {
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Ensure proper touch targets */
+  /* button, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  } */
+
+  /* Prevent horizontal scroll */
+  * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
 }
 
 ::-webkit-scrollbar {

@@ -37,30 +37,38 @@ function SideDrawer() {
   return (
     <>
       <Box
+        position={{ base: "fixed", md: "static" }}
+        top={{ base: "0", md: "auto" }}
+        left={{ base: "0", md: "auto" }}
+        right={{ base: "0", md: "auto" }}
+        zIndex={{ base: "1000", md: "auto" }}
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        bg={theme.mainBgColor}
+        bg={{ base: "white", md: theme.mainBgColor }}
         w="100%"
-        p="5px 10px 5px 10px"
-        borderWidth="5px"
+        p={{ base: "12px 15px", md: "5px 10px 5px 10px" }}
+        borderWidth={{ base: "0", md: "5px" }}
+        minH={{ base: "60px", md: "60px" }}
+        boxShadow={{ base: "0 2px 8px rgba(0,0,0,0.1)", md: "none" }}
+        borderBottom={{ base: "1px solid #e2e8f0", md: "none" }}
       >
-        <>
+        <Box display="flex" alignItems="center">
           <Image
             src={chattr}
             alt="Chattr Logo"
-            width="110px"
-            height="50px"
+            width={{ base: "90px", md: "110px" }}
+            height={{ base: "40px", md: "50px" }}
           />
-        </>
-        <div>
+        </Box>
+        <Box display="flex" alignItems="center" gap={{ base: 2, md: 2 }}>
           <Menu>
             <MenuButton p={1}>
               <NotificationBadge
                 count={notification.length}
                 effect={Effect.SCALE}
               />
-              <BellIcon fontSize="2xl" m={1} />
+              <BellIcon fontSize={{ base: "xl", md: "2xl" }} m={1} color={{ base: "gray.600", md: "inherit" }} />
             </MenuButton>
             <MenuList pl={2}>
               {!notification.length && "No New Messages"}
@@ -91,7 +99,7 @@ function SideDrawer() {
               <MenuItem onClick={logoutHandler}>Logout</MenuItem>
             </MenuList>
           </Menu>
-        </div>
+        </Box>
       </Box >
     </>
   );
