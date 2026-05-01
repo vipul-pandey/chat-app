@@ -6,31 +6,35 @@ const UserListItem = ({ key, user, handleFunction }) => {
       key={key}
       onClick={handleFunction}
       cursor="pointer"
-      bg="#E8E8E8"
+      bg="#f8fafc"
       _hover={{
-        background: "#38B2AC",
+        background: "linear-gradient(135deg, #6b91ff 0%, #4f63d6 100%)",
         color: "white",
+        transform: "translateX(4px)",
       }}
       w="100%"
       display="flex"
       alignItems="center"
-      color="black"
-      px={3}
-      py={2}
+      color="#1e293b"
+      px={4}
+      py={3}
       mb={2}
-      borderRadius="lg"
+      borderRadius="14px"
+      transition="all 0.3s ease"
+      border="1px solid #e5e7eb"
     >
       <Avatar
-        mr={2}
-        size="sm"
+        mr={3}
+        size="md"
         cursor="pointer"
         name={user.name}
         src={user.pic}
+        borderRadius="12px"
+        border="2px solid #e5e7eb"
       />
-      <Box>
-        <Text>{user.name}</Text>
-        <Text fontSize="xs">
-          <b>Email : </b>
+      <Box flex={1} minW={0}>
+        <Text fontWeight="600" fontSize="md" noOfLines={1}>{user.name}</Text>
+        <Text fontSize="sm" color="inherit" opacity={0.7} noOfLines={1}>
           {user.email}
         </Text>
       </Box>

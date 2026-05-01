@@ -1,12 +1,69 @@
-@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&d=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
 
 .App {
   min-height: 100vh;
   display: flex;
-  background-image: url("./darkbg.jpg");
-  background-position: center;
-  background-size: cover;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   overflow-x: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modern scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(107, 145, 255, 0.3);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 145, 255, 0.5);
+}
+
+/* Global style for all react-icons */
+[class^="react-icons"],
+[class*=" react-icons"] {
+  cursor: pointer !important;
+  transition: all 0.2s ease;
+}
+
+/* Make all SVGs show pointer cursor */
+svg {
+  cursor: pointer !important;
+  transition: all 0.2s ease;
+}
+
+[class^="react-icons"]:hover,
+[class*=" react-icons"]:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+svg:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
 }
 
 /* Mobile optimizations */
@@ -17,45 +74,31 @@
     margin: 0;
   }
 
-  /* Remove all margins and padding on mobile */
   body {
     padding: 0;
     margin: 0;
   }
 
-  /* Ensure proper touch targets */
-  /* button, [role="button"] {
-    min-height: 44px;
-    min-width: 44px;
-  } */
-
-  /* Prevent horizontal scroll */
   * {
     max-width: 100%;
-    box-sizing: border-box;
   }
 }
 
-::-webkit-scrollbar {
-  width: 0px;
+/* Smooth page transitions */
+.fade-enter {
+  opacity: 0;
 }
 
-/* Global style for all react-icons */
-[class^="react-icons"],
-[class*=" react-icons"] {
-  cursor: pointer !important;
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 0.3s ease-in;
 }
 
-/* Make all SVGs show pointer cursor */
-svg {
-  cursor: pointer !important;
+.fade-exit {
+  opacity: 1;
 }
 
-/* ::-webkit-scrollbar-thumb {
-  background: rgba(136, 136, 136, 0.281);
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
 }
-
-/* Handle on hover */
-/* ::-webkit-scrollbar-thumb:hover {
-  background: #555;
-} */

@@ -8,11 +8,10 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Image,
 } from "@chakra-ui/react";
 import Login from "../components/Authentication/Login";
 import Signup from "../components/Authentication/Signup";
-import chattr from "../assests/chattr.png";
+import Logo from "../components/Logo";
 
 function Homepage() {
   const navigate = useNavigate();
@@ -28,23 +27,28 @@ function Homepage() {
       <Box
         display="flex"
         textAlign="center"
-        p={{ base: 2, md: 3 }}
+        p={{ base: 3, md: 4 }}
         bg="white"
         w="100%"
         m={{ base: "20px 0 10px 0", md: "40px 0 15px 0" }}
-        borderRadius="lg"
+        borderRadius="16px"
         borderWidth="1px"
+        borderColor="#e5e7eb"
+        boxShadow="0 2px 8px rgba(0, 0, 0, 0.06)"
       >
         <Box margin={"0 auto"}>
-          <Image
-            src={chattr}
-            alt="Chattr Logo"
-            width={{ base: "80px", md: "110px" }}
-            height={{ base: "35px", md: "50px" }}
-          />
+          <Logo size="lg" />
         </Box>
       </Box>
-      <Box bg="white" w="100%" p={{ base: 3, md: 4 }} borderRadius="lg" borderWidth="1px">
+      <Box 
+        bg="white" 
+        w="100%" 
+        p={{ base: 3, md: 4 }} 
+        borderRadius="16px" 
+        borderWidth="1px"
+        borderColor="#e5e7eb"
+        boxShadow="0 4px 12px rgba(0, 0, 0, 0.08)"
+      >
         <Tabs isFitted variant="soft-rounded">
           <TabList mb="1em">
             <Tab>Login</Tab>

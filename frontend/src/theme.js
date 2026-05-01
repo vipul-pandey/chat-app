@@ -1,5 +1,26 @@
 import { extendTheme } from "@chakra-ui/react";
 
+// Modern color palette
+const colors = {
+  primary: {
+    50: "#f0f4ff",
+    100: "#e0e9ff",
+    200: "#c1d3ff",
+    300: "#a2bdff",
+    400: "#8ba7ff",
+    500: "#6b91ff",
+    600: "#5570d6",
+    700: "#3f4fad",
+    800: "#2a2e84",
+    900: "#15105b",
+  },
+  gradient: {
+    primary: "linear-gradient(135deg, #6b91ff 0%, #4f63d6 100%)",
+    secondary: "linear-gradient(135deg, #00d4ff 0%, #0099ff 100%)",
+    accent: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+  },
+};
+
 // Global style for all react-icons
 const globalStyles = {
   '*, *::before, *::after': {
@@ -8,9 +29,13 @@ const globalStyles = {
   '[class^="react-icons"], [class*=" react-icons"]': {
     cursor: 'pointer',
   },
+  'html, body': {
+    fontFamily: "'Inter', 'Segoe UI', sans-serif",
+  },
 };
 
 const theme = extendTheme({
+  colors,
   breakpoints: {
     base: "0px",
     sm: "480px",
@@ -24,52 +49,63 @@ const theme = extendTheme({
   },
   components: {
     Button: {
-      // Default button styles
       baseStyle: {
-        fontWeight: "bold",
-        borderRadius: "md",
+        fontWeight: "600",
+        borderRadius: "10px",
+        transition: "all 0.3s ease",
+        _hover: {
+          transform: "translateY(-2px)",
+          boxShadow: "0 8px 16px rgba(107, 145, 255, 0.3)",
+        },
+        _active: {
+          transform: "translateY(0)",
+        },
       },
-      // Default props for all buttons
-      defaultProps: {
-        colorScheme: "real", // All buttons use teal color scheme by default
-      },
-      // Custom variants
       variants: {
         solid: {
-          bg: "teal.500",
+          bg: "linear-gradient(135deg, #6b91ff 0%, #4f63d6 100%)",
           color: "white",
           _hover: {
-            bg: "teal.600",
+            bg: "linear-gradient(135deg, #5570d6 0%, #3f4fad 100%)",
           },
         },
         outline: {
-          borderColor: "teal.500",
-          color: "teal.500",
+          borderColor: "#6b91ff",
+          color: "#6b91ff",
           _hover: {
-            bg: "teal.50",
+            bg: "rgba(107, 145, 255, 0.1)",
+          },
+        },
+        ghost: {
+          _hover: {
+            bg: "rgba(0, 0, 0, 0.05)",
           },
         },
       },
     },
-    dialog: {
-      borderRadius: 'md',
-      bg: `purple.100`,
-
-      // provide dark mode alternatives
-      _dark: {
-        bg: `purple.600`,
-        color: 'white',
+    Input: {
+      baseStyle: {
+        field: {
+          borderRadius: "12px",
+          transition: "all 0.3s ease",
+          border: "1.5px solid",
+          borderColor: "#e5e7eb",
+          _focus: {
+            borderColor: "#6b91ff",
+            boxShadow: "0 0 0 3px rgba(107, 145, 255, 0.1)",
+          },
+        },
       },
     },
   },
-  mainBgColor: "#f8f8f8",
-  secondaryBgColor: "#f8f8f8c8",
-  singleChatBgColor: "#e8e8e8",
+  mainBgColor: "#ffffff",
+  secondaryBgColor: "#f8fafc",
+  singleChatBgColor: "#f1f5f9",
   whiteColor: "#ffffff",
-  lightGreyColor: "#4b4949ff",
-  // Mobile-specific utilities
+  lightGreyColor: "#64748b",
+  accentColor: "#6b91ff",
   mobile: {
-    padding: "8px",
+    padding: "12px",
     fontSize: "14px",
     minTouchTarget: "44px",
   },

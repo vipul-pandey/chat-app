@@ -168,21 +168,23 @@ const MyChats = ({ fetchAgain }) => {
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDir="column"
       alignItems="center"
-      p={{ base: 0, md: 1 }}
+      p={{ base: 0, md: 3 }}
       bg={theme.mainBgColor}
       w={{ base: "100%", md: "31%" }}
-      borderRadius={{ base: "0", md: "lg" }}
-      borderWidth={{ base: "0", md: "1px" }}
+      borderRadius={{ base: "0", md: "20px" }}
+      borderWidth="0"
       h={{ base: "100%", md: "100%" }}
+      boxShadow="0 10px 40px rgba(0, 0, 0, 0.08)"
+      transition="all 0.3s ease"
     >
       <Box
         display="flex"
         flexDir="column"
-        p={{ base: 0, md: 1 }}
+        p={{ base: 0, md: 2 }}
         bg={theme.mainBgColor}
         w="100%"
         h="100%"
-        borderRadius={{ base: "0", md: "lg" }}
+        borderRadius={{ base: "0", md: "20px" }}
         overflowY="hidden"
       >
         <Box
@@ -190,108 +192,157 @@ const MyChats = ({ fetchAgain }) => {
           justifyContent="space-between"
           alignItems="center"
           w="100%"
-          px={{ base: 3, md: 2 }}
-          py={{ base: 2, md: 4 }}
+          px={{ base: 3, md: 4 }}
+          py={{ base: 2, md: 5 }}
           minH={{ base: "50px", md: "auto" }}
+          borderBottom="1px solid #e5e7eb"
         >
-          <Text fontSize={{ base: "16px", md: "18px" }} fontWeight="bold" color={{ base: "gray.800", md: "inherit" }}>Chats</Text>
+          <Text 
+            fontSize={{ base: "16px", md: "24px" }} 
+            fontWeight="700" 
+            color="#1e293b"
+            background="linear-gradient(135deg, #6b91ff 0%, #4f63d6 100%)"
+            backgroundClip="text"
+            WebkitBackgroundClip="text"
+            WebkitTextFillColor="transparent"
+          >
+            Messages
+          </Text>
           <Box display="flex" alignItems="center" gap={2}>
             <ChatWidget />
             <Menu>
-              <MenuButton>
+              <MenuButton
+                as={Box}
+                p={2}
+                borderRadius="10px"
+                _hover={{ bg: "rgba(107, 145, 255, 0.1)" }}
+                transition="all 0.2s ease"
+              >
                 <SVGComponent />
               </MenuButton>
-              <MenuList>
+              <MenuList
+                boxShadow="0 10px 40px rgba(0, 0, 0, 0.12)"
+                borderRadius="12px"
+                border="1px solid #e5e7eb"
+              >
                 <GroupChatModal>
-                  <MenuItem> Group Chat </MenuItem>
+                  <MenuItem borderRadius="8px"> Group Chat </MenuItem>
                 </GroupChatModal>
                 <Box display={{ base: "block", md: "none" }}>
-                  <MenuItem onClick={onOpen}> Search Users </MenuItem>
+                  <MenuItem borderRadius="8px" onClick={onOpen}> Search Users </MenuItem>
                 </Box>
               </MenuList>
             </Menu>
           </Box>
         </Box>
-        <Box display={{ base: "none", md: "block" }}>
+        <Box display={{ base: "none", md: "block" }} px={3} py={3}>
           <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
             <Button
               variant="ghost"
               onClick={onOpen}
               w={"100%"}
               justifyContent={"start"}
-              bg={"#E8E8E8"}
+              bg={"#f1f5f9"}
               my={2}
-              py={1}
+              py={3}
+              borderRadius="12px"
+              fontSize="14px"
+              color="#64748b"
+              _hover={{ bg: "rgba(107, 145, 255, 0.1)", color: "#6b91ff" }}
+              transition="all 0.2s ease"
             >
-              <i className="fas fa-search"></i>
-              <Text display={{ base: "none", md: "flex" }} px={4}>
+              <i className="fas fa-search" style={{ marginRight: "12px" }}></i>
+              <Text display={{ base: "none", md: "flex" }}>
                 Search User
               </Text>
             </Button>
           </Tooltip>
         </Box>
         {chats ? (
-          <Stack overflowY="scroll">
+          <Stack overflowY="auto" px={2} py={2} gap={2}>
             {chats.map((chat) => (
               <Box
                 onClick={() => setSelectedChat(chat)}
                 cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
-                color={selectedChat === chat ? "white" : "black"}
+                bg={selectedChat === chat ? "linear-gradient(135deg, #6b91ff 0%, #4f63d6 100%)" : "#f8fafc"}
+                color={selectedChat === chat ? "white" : "#1e293b"}
                 px={{ base: 2, md: 3 }}
-                py={{ base: 1, md: 2 }}
-                borderRadius="lg"
+                py={{ base: 1.5, md: 2 }}
+                borderRadius="12px"
                 key={chat._id}
                 display={"flex"}
                 alignItems={"center"}
-                minH={{ base: "50px", md: "auto" }}
+                minH={{ base: "45px", md: "50px" }}
+                transition="all 0.3s ease"
+                boxShadow={selectedChat === chat ? "0 4px 12px rgba(107, 145, 255, 0.3)" : "none"}
+                _hover={{
+                  bg: selectedChat === chat ? "linear-gradient(135deg, #5570d6 0%, #3f4fad 100%)" : "#f1f5f9",
+                  transform: "translateY(-1px)",
+                  boxShadow: selectedChat === chat ? "0 8px 20px rgba(107, 145, 255, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.06)",
+                }}
               >
                 <Avatar
                   mr={{ base: 1.5, md: 2 }}
-                  size={{ base: "xs", md: "sm" }}
+                  size={{ base: "sm", md: "md" }}
                   cursor="pointer"
                   name={chat.name}
-                  borderRadius={"10%"}
+                  borderRadius={"10px"}
+                  border={selectedChat === chat ? "1px solid white" : "none"}
                   src={!chat.isGroupChat
                     ? getSenderImage(loggedUser, chat.users)
                     : chat.pic || chat.groupAdmin.pic}
                 />
-                <Box display={'flex'} width={'100%'} justifyContent={"space-between"}>
-                  <Box>
-                    <Text fontSize={{ base: "xs", md: "md" }} fontWeight={{ base: "medium", md: "medium" }}>
+                <Box display={'flex'} width={'100%'} justifyContent={"space-between"} alignItems="center">
+                  <Box flex={1} minW={0}>
+                    <Text 
+                      fontSize={{ base: "xs", md: "sm" }} 
+                      fontWeight="600"
+                      color="inherit"
+                      noOfLines={1}
+                    >
                       {!chat.isGroupChat
                         ? getSender(loggedUser, chat.users)
                         : chat.chatName}
                     </Text>
                     {chat.latestMessage && (
-                      <Text fontSize={{ base: "xs", md: "xs" }} noOfLines={1} color="gray.500" fontWeight="normal">
+                      <Text 
+                        fontSize={{ base: "xs", md: "xs" }} 
+                        noOfLines={1} 
+                        color={selectedChat === chat ? "rgba(255,255,255,0.6)" : "#94a3b8"} 
+                        fontWeight="400"
+                      >
                         {chat.isGroupChat && <b>{chat.latestMessage.sender.name} : </b>}
-                        {chat.latestMessage.content.length > 40
-                          ? chat.latestMessage.content.substring(0, 40) + "..."
+                        {chat.latestMessage.content.length > 35
+                          ? chat.latestMessage.content.substring(0, 35) + "..."
                           : chat.latestMessage.content}
                       </Text>
                     )}
                   </Box>
-                  <Box textAlign={"right"}>
-                    <Text style={{ fontSize: "0.8em", color: shouldShowUnseenBadge(chat) ? '#d11567' : theme.lightGreyColor, marginLeft: "12px" }}>
+                  <Box textAlign={"right"} ml={1} flexShrink={0}>
+                    <Text 
+                      fontSize={{ base: "xs", md: "xs" }} 
+                      color={shouldShowUnseenBadge(chat) ? '#ef4444' : (selectedChat === chat ? "rgba(255,255,255,0.6)" : "#94a3b8")}
+                      fontWeight="500"
+                    >
                       {dayjs(chat?.latestMessage?.updatedAt).format("hh:mm A")}
                     </Text>
                     {shouldShowUnseenBadge(chat) && (
-                      <Text as="div" style={{
-                        marginLeft: "8px",
-                        backgroundColor: "#d11567",
-                        width: "20px",
-                        height: "20px",
-                        display: "inline-block",
-                        alignContent: "center",
-                        textAlign: "center",
-                        lineHeight: "20px",
-                        color: "white",
-                        borderRadius: "50%",
-                        fontSize: "0.7em",
-                      }}>
+                      <Box
+                        mt={0.5}
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        ml="auto"
+                        bg="#ef4444"
+                        w="18px"
+                        h="18px"
+                        borderRadius="50%"
+                        color="white"
+                        fontSize="0.65em"
+                        fontWeight="700"
+                      >
                         {chat.unseenMessagesCounts}
-                      </Text>
+                      </Box>
                     )}
                   </Box>
                 </Box>
@@ -304,17 +355,45 @@ const MyChats = ({ fetchAgain }) => {
       </Box>
       <Drawer placement="left" onClose={onClose} isOpen={isOpen} >
         <DrawerOverlay />
-        <DrawerContent bg={theme.mainBgColor}>
-          <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
-          <DrawerBody>
-            <Box display="flex" pb={2}>
+        <DrawerContent bg={theme.mainBgColor} borderRadius="0 20px 20px 0">
+          <DrawerHeader 
+            borderBottomWidth="1px"
+            borderColor="#e5e7eb"
+            fontSize="20px"
+            fontWeight="700"
+            color="#1e293b"
+          >
+            Search Users
+          </DrawerHeader>
+          <DrawerBody pt={6}>
+            <Box display="flex" pb={4} gap={2}>
               <Input
                 placeholder="Search by name or email"
-                mr={2}
+                borderRadius="12px"
+                border="1.5px solid #e5e7eb"
+                fontSize="14px"
+                _focus={{
+                  borderColor: "#6b91ff",
+                  boxShadow: "0 0 0 3px rgba(107, 145, 255, 0.1)",
+                }}
+                _placeholder={{ color: "#cbd5e1" }}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <Button onClick={handleSearch}>Go</Button>
+              <Button 
+                onClick={handleSearch}
+                borderRadius="12px"
+                px={6}
+                bg="linear-gradient(135deg, #6b91ff 0%, #4f63d6 100%)"
+                color="white"
+                fontWeight="600"
+                fontSize="14px"
+                _hover={{
+                  bg: "linear-gradient(135deg, #5570d6 0%, #3f4fad 100%)",
+                }}
+              >
+                Go
+              </Button>
             </Box>
             {loading ? (
               <ChatLoading />

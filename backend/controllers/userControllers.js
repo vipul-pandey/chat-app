@@ -15,7 +15,7 @@ const allUsers = asyncHandler(async (req, res) => {
     }
     : {};
 
-  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+  const users = await User.find({ ...keyword, _id: { $ne: req.user._id } });
   res.send(users);
 });
 
@@ -27,11 +27,10 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (!name || !email || !password) {
     res.status(400);
-    throw new Error("Please Enter all the Feilds");
+    throw new Error("Please Enter all the Fields");
   }
 
   const userExists = await User.findOne({ email });
-  // console.log('userExists====', userExists, 'User====>>>', User);
   if (userExists) {
     res.status(400);
     throw new Error("User already exists");
@@ -82,4 +81,27 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { allUsers, registerUser, authUser };
+const updateUser = asyncHandler(async (req, res) => {
+  const { name, pic } = req.body;
+
+  const user = await User.findById(req.params.id);
+  if (user) {
+    user.name = name;
+    user.pic = pic;
+
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      pic: updatedUser.pic,
+      token: generateToken(updatedUser._id),
+    });
+  } else {
+    res.status(404);
+    throw new Error("User Not Found");
+  }
+});
+
+module.exports = { allUsers, registerUser, authUser, updateUser };

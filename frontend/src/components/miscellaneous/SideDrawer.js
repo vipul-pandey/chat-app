@@ -6,7 +6,6 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
-  Image,
 } from "@chakra-ui/react";
 import { BellIcon } from "@chakra-ui/icons";
 import { Effect } from "react-notification-badge";
@@ -16,13 +15,14 @@ import { getSender } from "../../config/ChatLogics";
 import { ChatState } from "../../Context/ChatProvider";
 import SVGComponent from "../../assests/three-dot-icon.js";
 import theme from "../../theme.js";
-import chattr from "../../assests/chattr.png";
+import Logo from "../Logo";
 
 function SideDrawer() {
 
   const {
     setSelectedChat,
     user,
+    setUser,
     notification,
     setNotification,
   } = ChatState();
@@ -47,30 +47,41 @@ function SideDrawer() {
         alignItems="center"
         bg={{ base: "white", md: theme.mainBgColor }}
         w="100%"
-        p={{ base: "12px 15px", md: "5px 10px 5px 10px" }}
-        borderWidth={{ base: "0", md: "5px" }}
-        minH={{ base: "60px", md: "60px" }}
-        boxShadow={{ base: "0 2px 8px rgba(0,0,0,0.1)", md: "none" }}
-        borderBottom={{ base: "1px solid #e2e8f0", md: "none" }}
+        p={{ base: "12px 15px", md: "8px 15px" }}
+        borderWidth={{ base: "0", md: "0" }}
+        minH={{ base: "60px", md: "65px" }}
+        boxShadow={{ base: "0 2px 8px rgba(0,0,0,0.1)", md: "0 2px 8px rgba(0,0,0,0.05)" }}
+        borderBottom={{ base: "1px solid #e5e7eb", md: "1px solid #e5e7eb" }}
       >
         <Box display="flex" alignItems="center">
-          <Image
-            src={chattr}
-            alt="Chattr Logo"
-            width={{ base: "90px", md: "110px" }}
-            height={{ base: "40px", md: "50px" }}
-          />
+          <Logo size={{ base: "sm", md: "md" }} />
         </Box>
-        <Box display="flex" alignItems="center" gap={{ base: 2, md: 2 }}>
+        <Box display="flex" alignItems="center" gap={{ base: 2, md: 3 }}>
           <Menu>
-            <MenuButton p={1}>
+            <MenuButton 
+              p={{ base: 2, md: 2 }}
+              borderRadius="10px"
+              _hover={{ bg: "rgba(107, 145, 255, 0.1)" }}
+              transition="all 0.2s ease"
+            >
               <NotificationBadge
                 count={notification.length}
                 effect={Effect.SCALE}
               />
-              <BellIcon fontSize={{ base: "xl", md: "2xl" }} m={1} color={{ base: "gray.600", md: "inherit" }} />
+              <BellIcon 
+                fontSize={{ base: "lg", md: "xl" }} 
+                m={1} 
+                color={{ base: "#6b91ff", md: "#6b91ff" }}
+                transition="all 0.2s ease"
+                _hover={{ transform: "scale(1.1)" }}
+              />
             </MenuButton>
-            <MenuList pl={2}>
+            <MenuList 
+              pl={2}
+              borderRadius="12px"
+              boxShadow="0 10px 40px rgba(0, 0, 0, 0.12)"
+              border="1px solid #e5e7eb"
+            >
               {!notification.length && "No New Messages"}
               {notification.map((notif) => (
                 <MenuItem
@@ -92,7 +103,7 @@ function SideDrawer() {
               <SVGComponent />
             </MenuButton>
             <MenuList>
-              <ProfileModal user={user}>
+              <ProfileModal user={user} isUserEditable={true} setUser={setUser}>
                 <MenuItem>My Profile</MenuItem>
               </ProfileModal>
               <MenuDivider />

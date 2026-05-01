@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import "./styles.css";
-// import axios from "axios";
 import axios from "../api/axiosInstance";
 import io from "socket.io-client";
 import { ArrowBackIcon } from "@chakra-ui/icons";
@@ -30,7 +29,6 @@ import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
 import SVGComponent from "../assests/three-dot-icon.js";
 import ChatWidget from "./AIChatWidget.jsx";
-import theme from "../theme.js";
 
 const ENDPOINT = "https://chat-app-dxnu.onrender.com/"; // "http://localhost:5000"
 var socket, selectedChatCompare;
@@ -44,6 +42,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [istyping, setIsTyping] = useState(false);
   const toast = useToast();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
   const emojiRef = useRef();
 
   const onEmojiClick = (emojiData) => {
@@ -217,101 +216,136 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     <>
       {selectedChat ? (
         <>
-          <Text
-            fontSize={{ base: "18px", md: "30px" }}
-            // pb={{ base: 2, md: 3 }}
-            px={{ base: 3, md: 2 }}
+          <Box
+            px={{ base: 3, md: 4 }}
+            py={{ base: 3, md: 4 }}
             w="100%"
-            fontFamily="Work sans"
             display="flex"
             justifyContent="space-between"
             alignItems="center"
-            height={'50px'}
+            minH="70px"
+            borderBottom="1px solid #e5e7eb"
+            bg="white"
+            borderRadius={{ base: "0", md: "20px 20px 0 0" }}
           >
-            <IconButton
-              display={{ base: "flex", md: "none" }}
-              icon={<ArrowBackIcon />}
-              onClick={() => setSelectedChat("")}
-              variant="ghost"
-              size="sm"
-              color="blue.500"
-              _hover={{ bg: "blue.50" }}
-              minW="30px"
-              w="30px"
-              h="30px"
-              mr={2}
-            />
-            {messages && (
-              <>
-                <Box display="flex" alignItems="center" flex="1" justifyContent="flex-start">
-                  <Avatar
-                    mr={2}
-                    size="sm"
+            <Box display="flex" alignItems="center" gap={3}>
+              <IconButton
+                display={{ base: "flex", md: "none" }}
+                icon={<ArrowBackIcon />}
+                onClick={() => setSelectedChat("")}
+                variant="ghost"
+                size="md"
+                color="#6b91ff"
+                _hover={{ bg: "rgba(107, 145, 255, 0.1)" }}
+                minW="44px"
+              />
+              {messages && (
+                <>
+                  <Box
+                    display="flex"
+                    alignItems="center"
                     cursor="pointer"
-                    name={selectedChat.name}
-                    borderRadius={"10%"}
-                    src={
-                      !selectedChat.isGroupChat
-                        ? getSenderImage(user, selectedChat.users)
-                        : selectedChat.pic || selectedChat.groupAdmin.pic
-                    }
-                  />
-                  <Text fontSize={{ base: "md", md: "lg" }} isTruncated maxW={{ base: "150px", md: "200px" }}>
-                    {!selectedChat.isGroupChat
-                      ? getSender(user, selectedChat.users)
-                      : selectedChat.chatName}
-                  </Text>
-                </Box>
-                <Box alignItems={"center"} display="flex" gap={{ base: 1, md: 2 }} right={0}>
-                  <ChatWidget />
-                  <Menu>
-                    <MenuButton>
-                      <SVGComponent />
-                    </MenuButton>
-                    <MenuList>
-                      {!selectedChat.isGroupChat ? (
-                        <ProfileModal
-                          user={getSenderFull(user, selectedChat.users)}
-                        >
-                          <MenuItem fontSize="medium" fontWeight="bold">
-                            Profile
-                          </MenuItem>
-                        </ProfileModal>
-                      ) : (
-                        <UpdateGroupChatModal
-                          fetchMessages={fetchMessages}
-                          fetchAgain={fetchAgain}
-                          setFetchAgain={setFetchAgain}
-                        >
-                          <MenuItem fontSize="medium" fontWeight="bold">
-                            Profile
-                          </MenuItem>
-                        </UpdateGroupChatModal>
-                      )}
-                    </MenuList>
-                  </Menu>
-                </Box>
-              </>
-            )}
-          </Text>
+                    onClick={() => setShowProfileModal(true)}
+                    transition="all 0.2s ease"
+                    _hover={{ opacity: 0.8 }}
+                  >
+                    <Avatar
+                      mr={3}
+                      size={{ base: "md", md: "lg" }}
+                      cursor="pointer"
+                      name={selectedChat.name}
+                      borderRadius="12px"
+                      border="2px solid #e5e7eb"
+                      src={
+                        !selectedChat.isGroupChat
+                          ? getSenderImage(user, selectedChat.users)
+                          : selectedChat.pic || selectedChat.groupAdmin.pic
+                      }
+                    />
+                    <Box>
+                      <Text
+                        fontSize={{ base: "md", md: "18px" }}
+                        fontWeight="700"
+                        color="#1e293b"
+                        isTruncated
+                        maxW={{ base: "150px", md: "250px" }}
+                      >
+                        {!selectedChat.isGroupChat
+                          ? getSender(user, selectedChat.users)
+                          : selectedChat.chatName}
+                      </Text>
+                      <Text
+                        fontSize={{ base: "xs", md: "sm" }}
+                        color="#94a3b8"
+                        fontWeight="500"
+                      >
+                        {selectedChat.isGroupChat ? `${selectedChat.users.length} members` : "Active now"}
+                      </Text>
+                    </Box>
+                  </Box>
+                </>
+              )}
+            </Box>
+            <Box alignItems={"center"} display="flex" gap={{ base: 2, md: 3 }}>
+              <ChatWidget />
+              <Menu>
+                <MenuButton
+                  as={Box}
+                  p={2}
+                  borderRadius="10px"
+                  _hover={{ bg: "rgba(107, 145, 255, 0.1)" }}
+                  transition="all 0.2s ease"
+                >
+                  <SVGComponent />
+                </MenuButton>
+                <MenuList
+                  boxShadow="0 10px 40px rgba(0, 0, 0, 0.12)"
+                  borderRadius="12px"
+                  border="1px solid #e5e7eb"
+                >
+                  {!selectedChat.isGroupChat ? (
+                    <ProfileModal
+                      user={getSenderFull(user, selectedChat.users)}
+                      isUserEditable={false}
+                    >
+                      <MenuItem fontSize="medium" fontWeight="600" borderRadius="8px">
+                        Profile
+                      </MenuItem>
+                    </ProfileModal>
+                  ) : (
+                    <UpdateGroupChatModal
+                      fetchMessages={fetchMessages}
+                      fetchAgain={fetchAgain}
+                      setFetchAgain={setFetchAgain}
+                    >
+                      <MenuItem fontSize="medium" fontWeight="600" borderRadius="8px">
+                        Profile
+                      </MenuItem>
+                    </UpdateGroupChatModal>
+                  )}
+                </MenuList>
+              </Menu>
+            </Box>
+          </Box>
           <Box
             display="flex"
             flexDir="column"
             justifyContent="flex-end"
-            p={{ base: 2, md: 3 }}
-            bg={theme.singleChatBgColor}
+            p={{ base: 0, md: 3 }}
+            bg="#f8fafc"
             w="100%"
             h="100%"
-            borderRadius={{ base: "0", md: "lg" }}
+            borderRadius={{ base: "0", md: "0 0 20px 20px" }}
             overflowY="hidden"
           >
             {loading ? (
               <Spinner
-                size="xl"
-                w={20}
-                h={20}
+                size="lg"
+                w={16}
+                h={16}
                 alignSelf="center"
                 margin="auto"
+                color="#6b91ff"
               />
             ) : (
               <div className="messages">
@@ -321,17 +355,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
             <FormControl
               onKeyDown={sendMessage}
-              id="first-name"
+              id="message-input"
               isRequired
-              mt={3}
+              px={{ base: 2, md: 3 }}
+              pb={{ base: 2, md: 3 }}
             >
               {istyping ? (
-                <Box>
+                <Box mb={2} ml={2}>
                   <Lottie
                     options={defaultOptions}
-                    // height={50}
                     width={70}
-                    style={{ marginBottom: 15, marginLeft: 0 }}
+                    style={{ marginBottom: 0 }}
                   />
                 </Box>
               ) : (
@@ -341,10 +375,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <Box
                   ref={emojiRef}
                   position="absolute"
-                  bottom="40px"
-                  left="10px"
-                  right="10px"
-                  zIndex={1}
+                  bottom="80px"
+                  left={{ base: "20px", md: "40px" }}
+                  right={{ base: "20px", md: "40px" }}
+                  zIndex={10}
+                  borderRadius="16px"
+                  boxShadow="0 15px 40px rgba(0, 0, 0, 0.15)"
                 >
                   <EmojiPicker
                     onEmojiClick={onEmojiClick}
@@ -354,25 +390,31 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               <Box
                 display="flex"
                 alignItems="center"
+                gap={{ base: 2, md: 3 }}
                 bg="white"
-                px={{ base: 2, md: 3 }}
-                py={{ base: 1.5, md: 2 }}
-                borderRadius="10px"
-                boxShadow="sm"
+                px={{ base: 3, md: 4 }}
+                py={{ base: 2.5, md: 3 }}
+                borderRadius="16px"
+                boxShadow="0 4px 16px rgba(0, 0, 0, 0.08)"
                 w="100%"
                 mx="auto"
-                minH={{ base: "40px", md: "auto" }}
+                minH={{ base: "48px", md: "56px" }}
+                border="1px solid #e5e7eb"
+                transition="all 0.2s ease"
+                _focus={{ borderColor: "#6b91ff" }}
               >
                 <Box
                   as="button"
                   onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                  fontSize={{ base: "16px", md: "20px" }}
-                  mr={{ base: 1, md: 2 }}
+                  fontSize={{ base: "20px", md: "24px" }}
+                  transition="all 0.2s ease"
+                  _hover={{ transform: "scale(1.2)" }}
+                  _active={{ transform: "scale(0.95)" }}
                 >
                   😊
                 </Box>
                 <Input
-                  placeholder="Enter a message..."
+                  placeholder="Type your message..."
                   variant="unstyled"
                   value={newMessage}
                   onChange={typingHandler}
@@ -381,6 +423,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   autoCorrect="off"
                   spellCheck="false"
                   bg="transparent"
+                  fontSize={{ base: "14px", md: "16px" }}
+                  _placeholder={{ color: "#cbd5e1" }}
                   _hover={{ bg: "transparent" }}
                   _focus={{
                     boxShadow: "none",
@@ -394,13 +438,22 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   }}
                 />
                 <IconButton
-                  colorScheme="blue"
                   aria-label="Send message"
-                  icon={<FiSend size="16px" />}
+                  icon={<FiSend />}
                   onClick={(e) => sendMessage(e)}
-                  ml={{ base: 1, md: 2 }}
-                  borderRadius="full"
+                  borderRadius="10px"
                   size={{ base: "sm", md: "md" }}
+                  bg="linear-gradient(135deg, #6b91ff 0%, #4f63d6 100%)"
+                  color="white"
+                  _hover={{
+                    bg: "linear-gradient(135deg, #5570d6 0%, #3f4fad 100%)",
+                    transform: "translateY(-1px)",
+                    boxShadow: "0 4px 12px rgba(107, 145, 255, 0.4)",
+                  }}
+                  _active={{
+                    transform: "translateY(0)",
+                  }}
+                  transition="all 0.2s ease"
                 />
               </Box>
             </FormControl>
@@ -418,6 +471,19 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             Click on a user to start chatting
           </Text>
         </Box>
+      )}
+      {showProfileModal && (
+        <ProfileModal
+          user={
+            !selectedChat.isGroupChat
+              ? getSenderFull(user, selectedChat.users)
+              : user
+          }
+          isUserEditable={false}
+        >
+          <></>
+        </ProfileModal>
+
       )}
     </>
   );
