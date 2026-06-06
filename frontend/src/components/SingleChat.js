@@ -30,7 +30,8 @@ import { ChatState } from "../Context/ChatProvider";
 import SVGComponent from "../assests/three-dot-icon.js";
 import ChatWidget from "./AIChatWidget.jsx";
 
-const ENDPOINT = "https://chat-app-dxnu.onrender.com/"; // "http://localhost:5000"
+const ENDPOINT = "https://chat-app-dxnu.onrender.com/";
+// const ENDPOINT = "http://localhost:5100";
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
@@ -83,7 +84,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           config
         );
       }
-      // setFetchAgain(!fetchAgain);
+      setFetchAgain(!fetchAgain);
 
       setMessages(data);
       setLoading(false);

@@ -44,16 +44,11 @@ const sendMessage = asyncHandler(async (req, res) => {
       select: "name pic email",
     });
 
-    // Update latestMessage and increment unseenMessagesCounts
-    // Get previous unseenMessagesCounts count from DB and increment by 1
-    const chat = await Chat.findById(chatId);
-    const prevUnseen = chat?.unseenMessagesCounts || 0;
-
+    // Update latestMessage
     var response = await Chat.findByIdAndUpdate(
       chatId,
       {
         latestMessage: message,
-        unseenMessagesCounts: prevUnseen + 1,
       },
     );
     res.json(message);

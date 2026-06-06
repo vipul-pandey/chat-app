@@ -10,7 +10,13 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const path = require("path");
 
 dotenv.config();
-connectDB();
+
+// Initialize DB connection (don't block server startup)
+connectDB().catch((err) => {
+  console.error("⚠️ Failed to connect to MongoDB on startup:", err.message);
+  console.log("🔄 Will retry on first request...");
+});
+
 const app = express();
 
 // ✅ Allow ALL Origins (only for testing)

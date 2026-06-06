@@ -11,6 +11,13 @@ const chatModel = mongoose.Schema(
     },
     groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     unseenMessagesCounts: { type: Number, default: 0 },
+    // Track unread messages per user
+    unreadBy: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        count: { type: Number, default: 0 },
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -57,19 +57,29 @@ const accessChat = asyncHandler(async (req, res) => {
 //@access          Protected
 const fetchChats = asyncHandler(async (req, res) => {
   try {
-    Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
+    const chats = await Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
       .populate("users", "-password")
       .populate("groupAdmin", "-password")
       .populate("latestMessage")
-      .sort({ updatedAt: -1 })
-      .then(async (results) => {
-        // console.log('results=======>>>>', results);
-        results = await User.populate(results, {
-          path: "latestMessage.sender",
-          select: "name pic email",
-        });
-        res.status(200).send(results);
+      .sort({ updatedAt: -1 });
+
+    const results = await User.populate(chats, {
+      path: "latestMessage.sender",
+      select: "name pic email",
+    });
+
+    // Recalculate unseenMessagesCounts based on actual unread messages
+    for (let chat of results) {
+      const messages = await Message.find({
+        chat: chat._id,
+        sender: { $ne: req.user._id },  // Only count messages from OTHER users
+        $nor: [{ readBy: { $elemMatch: { $eq: req.user._id } } }]  // That current user hasn't read
       });
+
+      chat.unseenMessagesCounts = messages.length;
+    }
+
+    res.status(200).send(results);
   } catch (error) {
     res.status(400);
     throw new Error(error.message);
@@ -85,32 +95,28 @@ const markMessagesAsSeen = asyncHandler(async (req, res) => {
   }
   try {
     if (chatId) {
-      // 1. Update unseenMessagesCounts for the selected chat
-      await Chat.updateOne(
-        { _id: chatId },
-        { $set: { unseenMessagesCounts: 0 } }
+      // Mark all messages in this chat as read by current user
+      await Message.updateMany(
+        {
+          chat: chatId,
+          sender: { $ne: userId }  // Don't mark own messages
+        },
+        { $addToSet: { readBy: userId } }
       );
 
-      // 2. Update isMessageSeen for the latest message in the selected chat
-      const chat = await Chat.findById(chatId).populate("latestMessage");
-      console.log('chat on mark as seen', chat);
-      if (chat && chat.latestMessage) {
-        await Message.updateOne(
-          { _id: chat.latestMessage._id },
-          { $set: { isMessageSeen: true } }
-        );
-      }
-    }
+      // Recalculate unread count - only count messages from OTHER users that aren't read
+      const messages = await Message.find({
+        chat: chatId,
+        sender: { $ne: userId },  // Only messages from other users
+        $nor: [{ readBy: { $elemMatch: { $eq: userId } } }]  // That current user hasn't read
+      });
 
-    // 3. For other chats, set isMessageSeen: false for their latest message
-    const otherChats = await Chat.find({ _id: { $ne: chatId }, users: userId }).populate("latestMessage");
-    for (const otherChat of otherChats) {
-      if (otherChat.latestMessage) {
-        await Message.updateOne(
-          { _id: otherChat.latestMessage._id },
-          { $set: { isMessageSeen: false } }
-        );
-      }
+      const unreadCount = messages.length;
+
+      await Chat.updateOne(
+        { _id: chatId },
+        { unseenMessagesCounts: unreadCount }
+      );
     }
 
     res.status(200).send('Messages marked as seen');
