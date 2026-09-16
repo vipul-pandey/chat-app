@@ -79,7 +79,9 @@ const MyChats = ({ fetchAgain }) => {
         config
       );
     }
-    markAllMessagesAsUnSeen();
+    markAllMessagesAsUnSeen().catch(() => {
+      // Authentication is handled by the shared API client.
+    });
   }, [user._id, user.token]);
 
   useEffect(() => {

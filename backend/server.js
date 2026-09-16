@@ -19,15 +19,18 @@ connectDB().catch((err) => {
 
 const app = express();
 
-// ✅ Allow ALL Origins (only for testing)
+const { allowedOrigins, authRequestGuard } = require("./middleware/sessionSecurity");
 app.use(cors({
-  origin: "*",
+  origin: allowedOrigins,
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
 }));
-
-// ✅ Allow pre-flight across all routes
-app.options("*", cors());
+app.use("/api/user", authRequestGuard);
+app.use("/api", (req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
 
 // ✅ Parse JSON payloads
 app.use(express.json());

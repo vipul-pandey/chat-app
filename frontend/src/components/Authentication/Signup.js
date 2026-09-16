@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from '../../api/axiosInstance';
+import axios, { acceptLogin } from '../../api/axiosInstance';
 import { useNavigate } from "react-router";
 import { Button, FormControl, FormLabel, Input, InputGroup, InputRightElement, VStack, useToast } from "@chakra-ui/react";
 
@@ -62,13 +62,13 @@ const Signup = () => {
         isClosable: true,
         position: "bottom",
       });
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      acceptLogin(data);
       setPicLoading(false);
       navigate("/chats");
     } catch (error) {
       toast({
         title: "Error Occured!",
-        description: error.response.data.message,
+        description: error.response?.data?.message || "Unable to connect. Please try again.",
         status: "error",
         duration: 5000,
         isClosable: true,

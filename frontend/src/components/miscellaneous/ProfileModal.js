@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { EditIcon, ViewIcon } from "@chakra-ui/icons";
 import axios from '../../api/axiosInstance';
+import { saveUser } from '../../api/session';
 
 const ProfileModal = ({ user, children, isUserEditable, setUser }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -44,7 +45,7 @@ const ProfileModal = ({ user, children, isUserEditable, setUser }) => {
       setEditing(false);
       if (setUser) {
         setUser(data);
-        localStorage.setItem("userInfo", JSON.stringify(data));
+        saveUser(data);
       }
       toast({
         title: "Profile updated!",

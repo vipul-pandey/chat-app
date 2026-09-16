@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { readUser } from "../api/session";
+
 const ChatContext = createContext();
 
 const ChatProvider = ({ children }) => {
@@ -12,11 +14,23 @@ const ChatProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    setUser(userInfo);
-
-    if (!userInfo) navigate("/");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const syncSession = () => {
+      const userInfo = readUser();
+      setUser(userInfo);
+      if (!userInfo) {
+        setChats(undefined);
+        setSelectedChat(undefined);
+        setNotification([]);
+        navigate("/", { replace: true });
+      }
+    };
+    syncSession();
+    window.addEventListener("chat-session-changed", syncSession);
+    window.addEventListener("storage", syncSession);
+    return () => {
+      window.removeEventListener("chat-session-changed", syncSession);
+      window.removeEventListener("storage", syncSession);
+    };
   }, [navigate]);
 
   return (

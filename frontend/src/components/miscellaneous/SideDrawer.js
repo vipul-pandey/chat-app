@@ -6,6 +6,7 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  useToast,
 } from "@chakra-ui/react";
 import { BellIcon } from "@chakra-ui/icons";
 import { Effect } from "react-notification-badge";
@@ -17,7 +18,10 @@ import SVGComponent from "../../assests/three-dot-icon.js";
 import theme from "../../theme.js";
 import Logo from "../Logo";
 
+import { logout } from "../../api/axiosInstance";
+
 function SideDrawer() {
+  const toast = useToast();
 
   const {
     setSelectedChat,
@@ -29,9 +33,13 @@ function SideDrawer() {
 
   const navigate = useNavigate();
 
-  const logoutHandler = () => {
-    localStorage.removeItem("userInfo");
-    navigate("/");
+  const logoutHandler = async () => {
+    try {
+      await logout();
+      navigate("/");
+    } catch {
+      toast({ title: "Logout failed", description: "Please check your connection and try again.", status: "error", isClosable: true });
+    }
   };
 
   return (

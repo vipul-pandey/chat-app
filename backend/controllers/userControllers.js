@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const generateToken = require("../config/generateToken");
+const { createSession } = require("../config/refreshSession");
 
 //@description     Get or Search all users
 //@route           GET /api/user?search=
@@ -44,6 +45,7 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
+    await createSession(req, res, user);
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -67,6 +69,7 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
+    await createSession(req, res, user);
     res.json({
       _id: user._id,
       name: user.name,
@@ -82,6 +85,9 @@ const authUser = asyncHandler(async (req, res) => {
 });
 
 const updateUser = asyncHandler(async (req, res) => {
+  if (String(req.user._id) !== req.params.id) {
+    return res.status(403).json({ message: "You can only update your own profile." });
+  }
   const { name, pic } = req.body;
 
   const user = await User.findById(req.params.id);

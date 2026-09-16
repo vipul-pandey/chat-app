@@ -1,5 +1,15 @@
 {
   "buildCommand": "npm run vercel-build",
   "installCommand": "npm install --legacy-peer-deps",
-  "outputDirectory": "build"
+  "outputDirectory": "build",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://chat-app-dxnu.onrender.com/api/:path*"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ]
 }
