@@ -5,7 +5,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://chat-app-dxnu.onrender.com/api/:path*"
+      "destination": "https://d2suke8zow8xpc.cloudfront.net/api/:path*"
     },
     {
       "source": "/((?!api/).*)",

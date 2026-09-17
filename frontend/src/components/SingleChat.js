@@ -31,7 +31,7 @@ import SVGComponent from "../assests/three-dot-icon.js";
 import ChatWidget from "./AIChatWidget.jsx";
 
 const ENDPOINT = process.env.NODE_ENV === "production"
-  ? "https://chat-app-dxnu.onrender.com" : "http://localhost:5100";
+  ? "https://d2suke8zow8xpc.cloudfront.net" : "http://localhost:5100";
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {

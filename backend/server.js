@@ -8,6 +8,7 @@ const messageRoutes = require("./routes/messageRoutes");
 const aiChatROutes = require("./routes/aiChatRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const path = require("path");
+const mongoose = require("mongoose");
 
 dotenv.config();
 
@@ -35,6 +36,12 @@ app.use("/api", (req, res, next) => {
 // ✅ Parse JSON payloads
 app.use(express.json());
 
+// Deployment readiness: do not report success before MongoDB is connected.
+app.get("/api/health", (req, res) => {
+  const ready = mongoose.connection.readyState === 1;
+  res.status(ready ? 200 : 503).json({ status: ready ? "ok" : "unavailable" });
+});
+
 // ✅ API Routes
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
@@ -44,7 +51,7 @@ app.use("/api/aiChat", aiChatROutes);
 // ✅ Static file setup for production
 const __dirname1 = path.resolve();
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production" && process.env.SERVE_FRONTEND !== "false") {
   app.use(express.static(path.join(__dirname1, "/frontend/build")));
   app.get("*", (req, res) =>
     res.sendFile(path.resolve(__dirname1, "frontend", "build", "index.html"))
@@ -61,7 +68,7 @@ app.use(errorHandler);
 
 // ✅ Start server
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () =>
+const server = app.listen(PORT, process.env.HOST || "0.0.0.0", () =>
   console.log(`Server running on PORT ${PORT}...`)
 );
 
@@ -69,7 +76,7 @@ const server = app.listen(PORT, () =>
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "*", // ✅ Allow any domain for testing
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: false,
   },

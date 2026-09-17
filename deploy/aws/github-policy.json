@@ -1,0 +1,9 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": "ec2-instance-connect:SendSSHPublicKey",
+    "Resource": "arn:aws:ec2:ap-south-1:559947224926:instance/i-0de4d014f0d84be58",
+    "Condition": {"StringEquals": {"ec2:osuser": "ubuntu"}}
+  }]
+}

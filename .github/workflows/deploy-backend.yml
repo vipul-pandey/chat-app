@@ -1,0 +1,61 @@
+name: Deploy backend to EC2
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'backend/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'deploy/aws/**'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: chat-app-backend-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run test:auth
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::559947224926:role/chat-app-github-deploy
+          aws-region: ap-south-1
+      - name: Deploy verified release
+        env:
+          RELEASE_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          ssh-keygen -t ed25519 -N '' -f "$RUNNER_TEMP/deploy-key"
+          aws ec2-instance-connect send-ssh-public-key \
+            --instance-id i-0de4d014f0d84be58 \
+            --availability-zone ap-south-1a --instance-os-user ubuntu \
+            --ssh-public-key "file://$RUNNER_TEMP/deploy-key.pub"
+          SSH_OPTIONS=(-i "$RUNNER_TEMP/deploy-key" -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile=deploy/aws/known_hosts -o ConnectTimeout=15 \
+            -o ControlMaster=auto -o ControlPersist=10m -o "ControlPath=$RUNNER_TEMP/ec2-ssh")
+          ssh "${SSH_OPTIONS[@]}" ubuntu@43.205.138.62 true
+          tar -czf "$RUNNER_TEMP/backend.tar.gz" backend package.json package-lock.json deploy/aws
+          scp "${SSH_OPTIONS[@]}" "$RUNNER_TEMP/backend.tar.gz" "ubuntu@43.205.138.62:/tmp/chat-app-$RELEASE_SHA.tar.gz"
+          ssh "${SSH_OPTIONS[@]}" ubuntu@43.205.138.62 \
+            "sudo install -d /opt/chat-app/releases/$RELEASE_SHA && sudo tar -xzf /tmp/chat-app-$RELEASE_SHA.tar.gz -C /opt/chat-app/releases/$RELEASE_SHA && sudo bash /opt/chat-app/releases/$RELEASE_SHA/deploy/aws/install-backend.sh /opt/chat-app/releases/$RELEASE_SHA"
+          curl --fail --silent --show-error --retry 5 --retry-all-errors \
+            https://d2suke8zow8xpc.cloudfront.net/api/health
