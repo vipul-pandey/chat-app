@@ -2,7 +2,7 @@ import axios from "axios";
 import { readUser, saveUser } from "./session";
 
 const options = {
-  // Vercel proxies /api to Render so the refresh cookie is first-party.
+  // CloudFront (or the legacy Vercel proxy) keeps /api cookies first-party.
   // Preserve the current local backend port for development.
   baseURL: process.env.NODE_ENV === "production" ? "" : "http://localhost:5100",
   withCredentials: true,

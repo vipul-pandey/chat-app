@@ -1,6 +1,6 @@
 # Backend-first AWS migration
 
-Status: backend deployed on 2026-09-17; frontend hosting stays on Vercel.
+Status: backend and frontend deployed to AWS on 2026-09-17. Vercel is retained as a legacy deployment.
 Source repository: `vipul-pandey/chat-app`, current branch: `master`.
 
 ## Live resources
@@ -87,8 +87,33 @@ disk space; prune older releases deliberately as deployments accumulate, always
 retaining the current and last known-good release. Package installation failures
 occur before switching the active release.
 
-## Frontend migration later
+## Frontend on AWS
 
-Once backend deployment and rollback are verified, move React to private S3 with
-CloudFront, forwarding `/api/*` and `/socket.io/*` to the EC2 origin. Preserve the
-same-origin session design and disable caching for API/socket requests.
+The app is served at `https://d2suke8zow8xpc.cloudfront.net` from the private S3
+bucket `chat-app-frontend-559947224926-ap-south-1`. The existing CloudFront
+distribution uses an origin access control (OAC); S3 public access is blocked,
+and only this distribution can read objects through the bucket policy.
+
+`/api`, `/api/*`, `/socket.io`, and `/socket.io/*` retain the uncached EC2
+behavior. Other paths use S3; a viewer-request function rewrites extensionless
+SPA routes (including `/chats`) to `/index.html`. API errors are never rewritten.
+The backend origin allowlist includes the CloudFront and legacy Vercel domains.
+Refresh cookies remain first-party. Users need to sign in on the new hostname;
+the browser does not transfer cookies from Vercel.
+
+`.github/workflows/deploy-frontend.yml` builds and tests the frontend on master
+pushes, then uploads to S3 using the existing repository-scoped OIDC role.
+Its added IAM policy permits list/get/put only for this frontend bucket.
+Assets upload before index.html; old hashed assets are retained for open tabs.
+S3 versioning enables recovery of earlier objects. The current CloudFront S3
+behavior disables edge caching to make HTML updates immediate; browsers cache
+hashed static assets for a year. No cache invalidation is needed with this policy.
+
+Run `npm run build --prefix frontend` then `bash deploy/aws/publish-frontend.sh`
+for a manual release. `node deploy/aws/provision-frontend.cjs` recreates or updates
+the frontend infrastructure configuration using an authenticated administrator.
+Backend and frontend deployment jobs are independent, so changes spanning both
+must remain compatible while the two deployments finish.
+
+Vercel and Render services have not been deleted or disabled by this migration.
+The EC2 address and origin-HTTP limitations described above still apply.
